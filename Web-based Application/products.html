@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Listings - PriceCompare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+        }
+        
+        /* Navbar styles (same as homepage) */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 5%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2a52be;
+            margin-right: 20px;
+        }
+        
+        .logo img {
+            height: 40px;
+        }
+        
+        .search-bar {
+            flex-grow: 1;
+            max-width: 600px;
+            display: flex;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+        }
+        
+        .search-bar button {
+            padding: 10px 15px;
+            background-color: #2a52be;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-left: 20px;
+        }
+        
+        .nav-buttons button {
+            padding: 8px 15px;
+            background-color: transparent;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .nav-buttons .login {
+            color: #333;
+        }
+        
+        .nav-buttons .wishlist {
+            color: #2a52be;
+        }
+        
+        /* Filter section */
+        .filters {
+            background-color: white;
+            padding: 20px 5%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .filter-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .filter-group select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        /* Product grid */
+        .product-listings {
+            padding: 0 5% 40px;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .results-count {
+            color: #666;
+        }
+        
+        .sort-options select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            height: 200px;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .product-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-title {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: #333;
+            height: 40px;
+            overflow: hidden;
+        }
+        
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2a52be;
+            margin-bottom: 8px;
+        }
+        
+        .product-merchant {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 12px;
+        }
+        
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .view-deal {
+            padding: 8px 15px;
+            background-color: #2a52be;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-grow: 1;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .wishlist-btn {
+            padding: 8px;
+            background-color: transparent;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 10px;
+        }
+        
+        .wishlist-btn.active {
+            color: #ff4757;
+        }
+        
+        /* Footer (same as homepage) */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 40px 5%;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 8px;
+        }
+        
+        .footer-section ul li a {
+            color: #ddd;
+            text-decoration: none;
+        }
+        
+        .footer-section ul li a:hover {
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #555;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar (same as homepage) -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="logo.png" alt="PriceCompare Logo">
+        </div>
+        
+        <div class="search-bar">
+            <input type="text" placeholder="Search for products, brands, or categories...">
+            <button>Search</button>
+        </div>
+        
+        <div class="nav-buttons">
+            <button class="login">Login</button>
+            <button class="wishlist">Wishlist ♡</button>
+        </div>
+    </nav>
+    
+    <!-- Filter section -->
+    <div class="filters">
+        <div class="filter-container">
+            <div class="filter-group">
+                <label for="category">Category</label>
+                <select id="category">
+                    <option value="">All Categories</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="home">Home & Garden</option>
+                    <option value="beauty">Beauty</option>
+                    <option value="sports">Sports & Outdoors</option>
+                    <option value="toys">Toys & Games</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="brand">Brand</label>
+                <select id="brand">
+                    <option value="">All Brands</option>
+                    <option value="apple">Apple</option>
+                    <option value="samsung">Samsung</option>
+                    <option value="sony">Sony</option>
+                    <option value="nike">Nike</option>
+                    <option value="adidas">Adidas</option>
+                    <option value="amazon">Amazon Basics</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="price">Price Range</label>
+                <select id="price">
+                    <option value="">All Prices</option>
+                    <option value="0-50">Under $50</option>
+                    <option value="50-100">$50 - $100</option>
+                    <option value="100-200">$100 - $200</option>
+                    <option value="200-500">$200 - $500</option>
+                    <option value="500+">Over $500</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product listings -->
+    <div class="product-listings">
+        <div class="results-header">
+            <div class="results-count">124 products found</div>
+            <div class="sort-options">
+                <select>
+                    <option>Sort by: Best Match</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                    <option>Customer Ratings</option>
+                    <option>Newest Arrivals</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="product-grid">
+            <!-- Product 1 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/200x150?text=Smartphone" alt="Smartphone">
+                </div>
+                <div class="product-info">
+                    <div class="product-title">Premium Smartphone 128GB - Black</div>
+                    <div class="product-price">$599.99</div>
+                    <div class="product-merchant">Amazon, Best Buy, Walmart</div>
+                    <div class="product-actions">
+                        <a href="#" class="view-deal">View Deal</a>
+                        <button class="wishlist-btn">♡</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product 2 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/200x150?text=Headphones" alt="Headphones">
+                </div>
+                <div class="product-info">
+                    <div class="product-title">Wireless Noise-Cancelling Headphones</div>
+                    <div class="product-price">$199.99</div>
+                    <div class="product-merchant">Best Buy, Target</div>
+                    <div class="product-actions">
+                        <a href="#" class="view-deal">View Deal</a>
+                        <button class="wishlist-btn">♡</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product 3 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/200x150?text=Smartwatch" alt="Smartwatch">
+                </div>
+                <div class="product-info">
+                    <div class="product-title">Fitness Smartwatch with Heart Rate Monitor</div>
+                    <div class="product-price">$129.99</div>
+                    <div class="product-merchant">Amazon, Walmart</div>
+                    <div class="product-actions">
+                        <a href="#" class="view-deal">View Deal</a>
+                        <button class="wishlist-btn">♡</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product 4 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/200x150?text=Tablet" alt="Tablet">
+                </div>
+                <div class="product-info">
+                    <div class="product-title">10-inch Tablet 64GB - Space Gray</div>
+                    <div class="product-price">$329.99</div>
+                    <div class="product-merchant">Best Buy, Target</div>
+                    <div class="product-actions">
+                        <a href="#" class="view-deal">View Deal</a>
+                        <button class="wishlist-btn">♡</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product 5 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/200x150?text=Speaker" alt="Speaker">
+                </div>
+                <div class="product-info">
+                    <div class="product-title">Portable Bluetooth Speaker - Waterproof</div>
+                    <div class="product-price">$79.99</div>
+                    <div class="product-merchant">Amazon, Walmart</div>
+                    <div class="product-actions">
+                        <a href="#" class="view-deal">View Deal</a>
+                        <button class="wishlist-btn">♡</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product 6 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/200x150?text=Monitor" alt="Monitor">
+                </div>
+                <div class="product-info">
+                    <div class="product-title">27-inch 4K Monitor - IPS Panel</div>
+                    <div class="product-price">$349.99</div>
+                    <div class="product-merchant">Best Buy, Amazon</div>
+                    <div class="product-actions">
+                        <a href="#" class="view-deal">View Deal</a>
+                        <button class="wishlist-btn">♡</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer (same as homepage) -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>PriceCompare helps you find the best deals across hundreds of online retailers to save you time and money.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Top Deals</a></li>
+                    <li><a href="#">New Products</a></li>
+                    <li><a href="#">Categories</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Help</h3>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2023 PriceCompare. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
