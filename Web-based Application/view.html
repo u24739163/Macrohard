@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - CompareIt</title>
+    <link rel="stylesheet" href="view.css"> <!-- Fixed typo: was 'viwe.css' -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="homepage.html">CompareIt</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="homepage.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="register.html">Register</a></li>
+                    <li><a href="wishlist.html">Wishlist</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb">
+            <a href="homepage.html">Home</a> > 
+            <a href="products.html" id="category-link">Category</a> > 
+            <span id="product-name">Product Name</span>
+        </div>
+
+        <!-- Product Details Section -->
+        <section class="product-details">
+            <div class="product-gallery">
+                <img src="https://via.placeholder.com/500x400?text=Product+Image" alt="Product Image" id="main-product-image" class="main-image">
+                <div class="thumbnails" id="image-thumbnails">
+                    <!-- Example thumbnails -->
+                    <img src="https://via.placeholder.com/100x100?text=Thumb+1" alt="Thumbnail 1" class="thumbnail">
+                    <img src="https://via.placeholder.com/100x100?text=Thumb+2" alt="Thumbnail 2" class="thumbnail">
+                    <img src="https://via.placeholder.com/100x100?text=Thumb+3" alt="Thumbnail 3" class="thumbnail">
+                </div>
+            </div>
+
+            <div class="product-info">
+                <h1 id="product-title">Premium Smartphone 128GB - Black</h1>
+                
+                <div class="product-rating">
+                    <div class="stars" id="product-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span id="review-count">(127 reviews)</span>
+                </div>
+                
+                <div class="product-brand">
+                    Brand: <a href="#" id="brand-link">TechBrand</a>
+                </div>
+                
+                <div class="price-range">
+                    Price Range: <span id="min-price">R8,999.00</span> - <span id="max-price">R10,499.00</span>
+                </div>
+                
+                <div class="best-price">
+                    <div class="best-price-label">Best Price:</div>
+                    <div class="best-price-value" id="best-price">R8,999.00</div>
+                    <div class="best-price-retailer" id="best-retailer">at TechStore</div>
+                    <a href="#" id="buy-now-link" class="btn primary-btn" target="_blank">Buy Now</a>
+                </div>
+                
+                <button id="add-to-wishlist" class="btn secondary-btn">
+                    <i class="fas fa-heart"></i> Add to Wishlist
+                </button>
+            </div>
+        </section>
+
+        <!-- Tabbed Content Section -->
+        <section class="product-tabs">
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <button class="tab-button active" data-tab="overview">Overview</button>
+                    <button class="tab-button" data-tab="retailers">Retailers</button>
+                    <button class="tab-button" data-tab="specifications">Specifications</button>
+                    <button class="tab-button" data-tab="reviews">Reviews</button>
+                </div>
+
+                <div class="tabs-content">
+                    <!-- Tab 1: Overview -->
+                    <div class="tab-content active" id="overview-tab">
+                        <h2>Product Description</h2>
+                        <div id="product-description-content">
+                            <p>Experience premium smartphone technology with this sleek 128GB model. Featuring an advanced camera system, vibrant AMOLED display, and all-day battery performance.</p>
+                            
+                            <p>This smartphone combines powerful performance with elegant design. The 6.4-inch AMOLED display offers stunning color accuracy and brightness, perfect for streaming, gaming, and browsing. The advanced octa-core processor ensures smooth multitasking, while the 128GB of storage provides ample space for your apps, photos, and videos.</p>
+                            
+                            <p>The camera system includes a 48MP main sensor, 12MP ultra-wide lens, and 5MP macro camera, allowing you to capture stunning photos in any situation. The 4,500mAh battery supports fast charging and easily lasts a full day of heavy use.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Retailers -->
+                    <div class="tab-content" id="retailers-tab">
+                        <h2>Compare Prices</h2>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Retailer</th>
+                                        <th>Price</th>
+                                        <th>Shipping</th>
+                                        <th>Availability</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="retailers-table-body">
+                                    <!-- Example retailer rows -->
+                                    <tr>
+                                        <td class="retailer-cell">
+                                            <img src="https://via.placeholder.com/80x40?text=TechStore" alt="TechStore" class="retailer-logo">
+                                            <span>TechStore</span>
+                                        </td>
+                                        <td class="price-cell">R8,999.00</td>
+                                        <td>Free</td>
+                                        <td class="availability in-stock">In Stock</td>
+                                        <td>
+                                            <a href="#" class="btn primary-btn btn-sm">View Deal</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="retailer-cell">
+                                            <img src="https://via.placeholder.com/80x40?text=MegaShop" alt="MegaShop" class="retailer-logo">
+                                            <span>MegaShop</span>
+                                        </td>
+                                        <td class="price-cell">R9,499.00</td>
+                                        <td>R150.00</td>
+                                        <td class="availability in-stock">In Stock</td>
+                                        <td>
+                                            <a href="#" class="btn primary-btn btn-sm">View Deal</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="retailer-cell">
+                                            <img src="https://via.placeholder.com/80x40?text=Gadget+World" alt="Gadget World" class="retailer-logo">
+                                            <span>Gadget World</span>
+                                        </td>
+                                        <td class="price-cell">R10,499.00</td>
+                                        <td>Free</td>
+                                        <td class="availability low-stock">Low Stock</td>
+                                        <td>
+                                            <a href="#" class="btn primary-btn btn-sm">View Deal</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Specifications -->
+                    <div class="tab-content" id="specifications-tab">
+                        <h2>Technical Specifications</h2>
+                        <div class="specs-container">
+                            <div class="specs-group">
+                                <h3>Display</h3>
+                                <ul class="specs-list">
+                                    <li><span class="specs-label">Screen Size:</span> 6.4 inches</li>
+                                    <li><span class="specs-label">Resolution:</span> 2400 x 1080 pixels</li>
+                                    <li><span class="specs-label">Display Type:</span> AMOLED</li>
+                                    <li><span class="specs-label">Refresh Rate:</span> 120Hz</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="specs-group">
+                                <h3>Performance</h3>
+                                <ul class="specs-list">
+                                    <li><span class="specs-label">Processor:</span> Octa-core (2x2.8 GHz, 6x1.8 GHz)</li>
+                                    <li><span class="specs-label">RAM:</span> 8GB</li>
+                                    <li><span class="specs-label">Storage:</span> 128GB</li>
+                                    <li><span class="specs-label">Battery:</span> 4,500mAh</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="specs-group">
+                                <h3>Camera</h3>
+                                <ul class="specs-list">
+                                    <li><span class="specs-label">Main Camera:</span> 48MP, f/1.8</li>
+                                    <li><span class="specs-label">Ultra-Wide:</span> 12MP, f/2.2</li>
+                                    <li><span class="specs-label">Macro:</span> 5MP, f/2.4</li>
+                                    <li><span class="specs-label">Front Camera:</span> 32MP, f/2.0</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="specs-group">
+                                <h3>Connectivity</h3>
+                                <ul class="specs-list">
+                                    <li><span class="specs-label">Wi-Fi:</span> 802.11 a/b/g/n/ac/6</li>
+                                    <li><span class="specs-label">Bluetooth:</span> 5.2</li>
+                                    <li><span class="specs-label">USB:</span> Type-C 3.1</li>
+                                    <li><span class="specs-label">Headphone Jack:</span> No</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: Reviews -->
+                    <div class="tab-content" id="reviews-tab">
+                        <h2>Customer Reviews</h2>
+                        
+                        <div class="review-summary">
+                            <div class="average-rating">
+                                <div class="rating-number" id="avg-rating">4.5</div>
+                                <div class="rating-stars" id="avg-rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <div id="total-reviews">127 reviews</div>
+                            </div>
+                            
+                            <div class="rating-distribution" id="rating-distribution">
+                                <!-- Rating bars -->
+                                <div class="rating-bar">
+                                    <div class="rating-label">5 Star</div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 75%"></div>
+                                    </div>
+                                    <div class="rating-percentage">75%</div>
+                                </div>
+                                <div class="rating-bar">
+                                    <div class="rating-label">4 Star</div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 15%"></div>
+                                    </div>
+                                    <div class="rating-percentage">15%</div>
+                                </div>
+                                <div class="rating-bar">
+                                    <div class="rating-label">3 Star</div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 5%"></div>
+                                    </div>
+                                    <div class="rating-percentage">5%</div>
+                                </div>
+                                <div class="rating-bar">
+                                    <div class="rating-label">2 Star</div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 3%"></div>
+                                    </div>
+                                    <div class="rating-percentage">3%</div>
+                                </div>
+                                <div class="rating-bar">
+                                    <div class="rating-label">1 Star</div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 2%"></div>
+                                    </div>
+                                    <div class="rating-percentage">2%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="review-list" id="review-list">
+                            <!-- Example reviews -->
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div class="reviewer-name">John D.</div>
+                                    <div class="review-date">May 15, 2025</div>
+                                </div>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="review-title">Excellent phone, great value</div>
+                                <div class="review-content">
+                                    I've been using this phone for a month now and am extremely impressed with the performance and camera quality. Battery life is exceptional, easily lasting a full day of heavy use.
+                                </div>
+                            </div>
+                            
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div class="reviewer-name">Sarah T.</div>
+                                    <div class="review-date">May 10, 2025</div>
+                                </div>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <div class="review-title">Great phone with minor flaws</div>
+                                <div class="review-content">
+                                    Overall very happy with this purchase. The display is gorgeous and performance is snappy. My only complaint is that the camera could be better in low light situations.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="review-form" id="review-form-container">
+                            <h3>Write a Review</h3>
+                            <form id="review-form">
+                                <input type="hidden" id="product-id" name="product_id" value="123">
+                                
+                                <div class="form-group">
+                                    <label for="rating">Rating</label>
+                                    <div class="rating-input">
+                                        <input type="radio" id="star5" name="rating" value="5" />
+                                        <label for="star5"><i class="fas fa-star"></i></label>
+                                        <input type="radio" id="star4" name="rating" value="4" />
+                                        <label for="star4"><i class="fas fa-star"></i></label>
+                                        <input type="radio" id="star3" name="rating" value="3" />
+                                        <label for="star3"><i class="fas fa-star"></i></label>
+                                        <input type="radio" id="star2" name="rating" value="2" />
+                                        <label for="star2"><i class="fas fa-star"></i></label>
+                                        <input type="radio" id="star1" name="rating" value="1" />
+                                        <label for="star1"><i class="fas fa-star"></i></label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="review-title">Review Title</label>
+                                    <input type="text" id="review-title" name="title" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="review-content">Your Review</label>
+                                    <textarea id="review-content" name="content" rows="4" required></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn primary-btn">Submit Review</button>
+                            </form>
+                        </div>
+                        
+                        <div class="login-prompt" id="login-prompt" style="display: none;">
+                            <p>Please <a href="login.html">log in</a> to write a review.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Related Products Section -->
+        <section class="related-products">
+            <h2>Related Products</h2>
+            <div class="products-carousel" id="related-products">
+                <!-- Example related products -->
+                <div class="product-card">
+                    <a href="view.html?id=124" class="product-link">
+                        <img src="https://via.placeholder.com/200x200?text=Related+1" alt="Related Product 1" class="product-image">
+                        <h3 class="product-title">Premium Smartphone 256GB - Gold</h3>
+                        <div class="product-price">R10,999.00 - R12,499.00</div>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span class="review-count">(98)</span>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="product-card">
+                    <a href="view.html?id=125" class="product-link">
+                        <img src="https://via.placeholder.com/200x200?text=Related+2" alt="Related Product 2" class="product-image">
+                        <h3 class="product-title">Wireless Earbuds - White</h3>
+                        <div class="product-price">R1,699.00 - R1,999.00</div>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="review-count">(152)</span>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="product-card">
+                    <a href="view.html?id=126" class="product-link">
+                        <img src="https://via.placeholder.com/200x200?text=Related+3" alt="Related Product 3" class="product-image">
+                        <h3 class="product-title">Fast Charging Power Bank 20,000mAh</h3>
+                        <div class="product-price">R899.00 - R1,299.00</div>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span class="review-count">(87)</span>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="product-card">
+                    <a href="view.html?id=127" class="product-link">
+                        <img src="https://via.placeholder.com/200x200?text=Related+4" alt="Related Product 4" class="product-image">
+                        <h3 class="product-title">Phone Case - Premium Protection</h3>
+                        <div class="product-price">R349.00 - R499.00</div>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span class="review-count">(64)</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About Us</h3>
+                    <p>PriceCompare helps you find the best deals across hundreds of online retailers to save you time and money.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Top Deals</a></li>
+                        <li><a href="#">New Products</a></li>
+                        <li><a href="#">Categories</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Help</h3>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Connect With Us</h3>
+                    <ul>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">YouTube</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025 PriceCompare. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="view.js"></script>
+</body>
+</html>
