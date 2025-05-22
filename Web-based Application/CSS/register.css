@@ -21,6 +21,16 @@ body {
     
 }
 
+.logo a {
+    text-decoration: none;
+    color: #2a52be;
+}
+.logo {
+    font-size: 50px;
+    font-weight: bold;
+    color: #2a52be;
+}
+
 .logo {
     margin-bottom: 40px;
 }
@@ -183,6 +193,7 @@ body {
 .form-group.error input {
     border-color: #d32f2f;
 }
+
 
 .error-message {
     color: #d32f2f;
