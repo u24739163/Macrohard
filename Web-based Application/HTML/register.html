@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - PriceCompare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* Left side with registration form */
+        .register-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 80px;
+            background-color: #ffffff;
+        }
+        
+        .logo {
+            margin-bottom: 40px;
+        }
+        
+        .logo img {
+            height: 40px;
+        }
+        
+        .register-header {
+            margin-bottom: 30px;
+        }
+        
+        .register-header h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .register-header p {
+            color: #666;
+        }
+        
+        .register-form {
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .name-fields {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .name-fields .form-group {
+            flex: 1;
+        }
+        
+        .password-requirements {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+        }
+        
+        .register-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2a52be;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .register-button:hover {
+            background-color: #1a42a8;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #999;
+        }
+        
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .divider::before {
+            margin-right: 10px;
+        }
+        
+        .divider::after {
+            margin-left: 10px;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background-color: white;
+            color: #2a52be;
+            border: 1px solid #2a52be;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .login-button:hover {
+            background-color: #f5f8ff;
+        }
+        
+        /* Right side with beautiful image */
+        .register-image {
+            flex: 1;
+            background-image: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            order: 2; /* Ensures image is on the right */
+        }
+        
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to left, rgba(0,0,0,0.7), rgba(0,0,0,0.2));
+        }
+        
+        .image-text {
+            position: absolute;
+            bottom: 50px;
+            right: 50px;
+            color: white;
+            max-width: 500px;
+            text-align: right;
+        }
+        
+        .image-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .terms {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 20px;
+        }
+        
+        .terms a {
+            color: #2a52be;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Left side with registration form -->
+    <div class="register-container">
+        <div class="logo">
+            <img src="logo.png" alt="PriceCompare Logo">
+        </div>
+        
+        <div class="register-header">
+            <h1>Create your account</h1>
+            <p>Join PriceCompare to start saving on your purchases</p>
+        </div>
+        
+        <form class="register-form">
+            <div class="name-fields">
+                <div class="form-group">
+                    <label for="first-name">First name</label>
+                    <input type="text" id="first-name" placeholder="Enter your first name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="last-name">Last name</label>
+                    <input type="text" id="last-name" placeholder="Enter your last name" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Create a password" required>
+            </div>
+            
+            <div class="password-requirements">
+                Use 8 or more characters with a mix of letters, numbers & symbols
+            </div>
+            
+            <button type="submit" class="register-button">Create Account</button>
+            
+            <div class="terms">
+                By creating an account, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+            </div>
+            
+            <div class="divider">Already have an account?</div>
+            
+            <button type="button" class="login-button">Sign in instead</button>
+        </form>
+    </div>
+    
+    <!-- Right side with beautiful image -->
+    <div class="register-image">
+        <div class="image-overlay"></div>
+        <div class="image-text">
+            <h2>Start Saving Today</h2>
+            <p>Our members save an average of 20% on their purchases by comparing prices across hundreds of retailers.</p>
+        </div>
+    </div>
+</body>
+</html>
