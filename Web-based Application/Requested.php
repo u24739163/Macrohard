@@ -259,21 +259,40 @@ Register
             $images[] = $imgRow;
         }
 
-        $stmt=$this->conn->prepare("SELECT R.Name AS Retailer ,R.Website AS link, R.LogoURL AS logo, `Price`
+        $stmt=$this->conn->prepare("SELECT R.RetailerID AS RID,R.Name AS Retailer ,R.Website AS link, R.LogoURL AS logo, `Price`
              FROM `Sells` AS S JOIN Retailer AS R ON `RetailerID`=`Retailer_ID` WHERE `Product_ID`=?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $retailerResult = $stmt->get_result();
         $retailers = [];
-        $i=1;
         while ($retailerRow = $retailerResult->fetch_assoc()) {
+            $RetailerID=$retailerRow['RID'];
+            $stmt=$this->conn->prepare("SELECT ROUND(AVG(`Rating`), 1) AS Stars
+                FROM Review
+                WHERE `Retailer_ID` = ? AND `Product_ID` = ?");
+            $stmt->bind_param("ii",$RetailerID,$id);
+            $stmt->execute();
+            $avgResult=$stmt->get_result();
+            $rating=$avgResult->fetch_assoc();
+            $retailerRow['Rating']=$rating['Stars'];
             $retailers[] = $retailerRow;
+            
         }
 
         // Add images to the result
-        
+        $stmt=$this->conn->prepare("SELECT `Rating` AS STARS,User.`FirstName`, `Review_Date`,
+         `Comment` FROM `Review` JOIN `User` ON `User_ID`=`UserID` WHERE `Product_ID`=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $ReviewsResult = $stmt->get_result();
+        $Reviews = [];
+        while($reviewRow=$ReviewsResult->fetch_assoc()){
+            $Reviews[]=$reviewRow;
+        }
+
         $returner['Images'] = $images;
         $returner['Retailers']=$retailers;
+        $returner['Reviewers']=$Reviews;
         
         $this->response("true", $returner);
         $stmt->close();
