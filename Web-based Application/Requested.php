@@ -224,6 +224,56 @@ Register
         http_response_code(400);
 
     }
+
+    /*
+    view
+    */
+
+    function view($id){
+        if(!is_numeric($id)){
+            http_response_code(400);
+            $this->response("false","The id must be a numer");
+        }
+        $stmt = $this->conn->prepare("SELECT P.`ProductID`,P.`Name`,P.`Description`,
+        P.`Specifications`,B.Name AS Brand,C.Name AS Category
+         FROM Category AS C JOIN( Product AS P JOIN Brand AS B ON 
+         P.BrandID=B.BrandID) ON C.CategoryID=P.CategoryID
+           WHERE `P`.`ProductID`=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result(); 
+        $returner = [];
+       
+        $stmt = $this->conn->prepare("SELECT `ImageURL`, `Caption` FROM `Image` WHERE `ProductID`=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $imgResult = $stmt->get_result();
+        $images = [];
+        $i=1;
+        while ($imgRow = $imgResult->fetch_assoc()) {
+            $images[] = $imgRow;
+        }
+
+        $stmt=$this->conn->prepare("SELECT R.Name AS Retailer ,R.Website AS link, R.LogoURL AS logo, `Price`
+             FROM `Sells` AS S JOIN Retailer AS R ON `RetailerID`=`Retailer_ID` WHERE `Product_ID`=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $retailerResult = $stmt->get_result();
+        $retailers = [];
+        $i=1;
+        while ($retailerRow = $retailerResult->fetch_assoc()) {
+            $retailers[] = $retailerRow;
+        }
+
+        // Add images to the result
+        
+        $returner['Images'] = $images;
+        $returner['Retailers']=$retailers;
+        
+        $this->response("true", $returner);
+        $stmt->close();
+
+    }
 }
 
 $api = API::instance();
@@ -305,5 +355,7 @@ if (isset($data['type']) && $data['type'] === "Register") {
 }else if(isset($data['type']) && $data['type']==="Login"){
     $api->login($data['email'], $data['password']);
     return;
+}else if(isset($data['type']) && $data['type']==="View"){
+    $api->view($data['ID']);
 }
 ?>
