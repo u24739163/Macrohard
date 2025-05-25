@@ -132,6 +132,98 @@ Register
         echo json_encode(["success" => $success, "timestamp" => $timestamp, "data" => ["key"=>$data]]);
     }
 
+    /*
+    Verifying Apikey
+    */
+    public function IsAPiValid($testing){
+        if (!preg_match('/^[a-z0-9]{10,32}$/', $testing)) {
+            return false;
+        }
+
+        $stmt = $this->conn->prepare("SELECT `UserID` FROM `User` WHERE Apikey = ?");
+        $stmt->bind_param("s",$testing);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows== 1) {
+            $stmt->close();
+            return true;
+        }
+        $stmt->close();
+        return false;
+    }
+
+    /*
+    GetProducts
+    */
+
+    //SELECT P.`ProductID`,P.`Name`,P.`Description`,P.`Specifications`,B.Name,C.Name FROM Category AS C JOIN( Product AS P JOIN Brand AS B ON P.BrandID=B.BrandID) ON C.CategoryID=P.CategoryID
+    //SELECT MIN(`Price`) AS LowestPrice FROM Sells where `Product_ID`=6;
+    //
+
+
+    /*
+    login
+    */
+
+    function login($email,$password){
+
+        $email = trim($email);
+        $password = trim($password);
+        if (!preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',$email)) {
+            http_response_code(400);
+            $this->response("False","Invalid email format.");
+            return;
+        }
+
+        if (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{8,}$/", $password)) {
+            http_response_code(400);
+            $this->response("False","Incorrect password format");
+            return;
+        }
+
+        $stmt = $this->conn->prepare("SELECT `UserID`,`Salt`,`PasswordHash`,`Apikey`,`Type` FROM `User` WHERE Email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result=$stmt->get_result();
+        $salt=null;
+        $ComparisonPassword=null;
+        $APIKEY=null;
+        $type=NULL;
+        $row=$result->fetch_assoc();
+        if(!$row){
+            http_response_code(400);
+            $this->response("False","Invalid email format");
+            return;
+        }else{
+            $APIKEY=$row['Apikey'];
+            $ComparisonPassword=$row['PasswordHash'];
+            $salt=$row['Salt'];
+            $type=$row['Type'];
+        }
+        $hashedPassword=hash('sha512',$password.$salt);
+        //echo $hashedPassword;
+        //echo "|";
+        //echo $ComparisonPassword;
+        $stmt->close();
+        if($ComparisonPassword==$hashedPassword){
+            if($APIKEY===null){
+                $this->response("False","Invalid email format");
+                return;
+            }
+            $timestamp = time();
+            $data=["Apikey"=>$APIKEY,"Type"=>$type];
+            echo json_encode(["success" => "Success", "timestamp" => $timestamp, "data" =>$data]);
+            return;
+        }else{
+            http_response_code(400);
+            $this->response("False","Incorrect password");
+            return;
+        }
+        echo "Failed";
+        http_response_code(400);
+
+    }
 }
 
 $api = API::instance();
@@ -210,5 +302,8 @@ if (isset($data['type']) && $data['type'] === "Register") {
         $api->response(false, "All fields are required.");
         http_response_code(400);
     }
+}else if(isset($data['type']) && $data['type']==="Login"){
+    $api->login($data['email'], $data['password']);
+    return;
 }
 ?>
