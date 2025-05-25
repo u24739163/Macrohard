@@ -242,14 +242,19 @@ Register
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $result = $stmt->get_result(); 
-        $returner = [];
-       
+        $returner = $result->fetch_assoc(); // Only one product expected
+        $stmt->close();
+
+        if (!$returner) {
+            http_response_code(404);
+            $this->response("false", "Product not found");
+            return;
+        }
         $stmt = $this->conn->prepare("SELECT `ImageURL`, `Caption` FROM `Image` WHERE `ProductID`=?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $imgResult = $stmt->get_result();
         $images = [];
-        $i=1;
         while ($imgRow = $imgResult->fetch_assoc()) {
             $images[] = $imgRow;
         }
