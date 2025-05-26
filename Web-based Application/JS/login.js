@@ -69,15 +69,57 @@ document.addEventListener("DOMContentLoaded", function () {
       loadingDiv.innerHTML = '<div class="loader"></div>';
       document.body.appendChild(loadingDiv);
 
-      // Simulate API call
-      setTimeout(() => {
-        // Remove loading indicator
-        document.body.removeChild(loadingDiv);
+      const requestData = {
+        email: email,
+        password: password,
+        type: "Login",
+      };
 
-        // Here you would typically redirect to dashboard or products page
-        console.log("Login successful", { email, rememberMe });
-        // window.location.href = 'products.html';
-      }, 1500);
+      // Simulate API call (replace with actual API call)
+      const xhttp = new XMLHttpRequest();
+      xhttp.open("POST", "https://wheatley.cs.up.ac.za/u24739163/api.php", true);
+      xhttp.setRequestHeader("Content-Type", "application/json");
+      xhttp.setRequestHeader("Accept", "application/json");
+
+      xhttp.onload = function () {
+        document.getElementById("loading-screen").remove();
+
+        if (xhttp.status >= 200 && xhttp.status < 300) {
+          const response = JSON.parse(xhttp.responseText);
+          try {
+            if (response.success === "Success") {
+              //document.getElementById("signupForm").replaceWith(message);
+              localStorage.setItem("apiKey", response.data.Apikey);
+            } else {
+              showNotification(
+                response.data.message || "Registration failed",
+                "error"
+              );
+            }
+          } catch (e) {
+            showNotification(
+              "An error occurred while processing your request",
+              "error"
+            );
+          }
+        } else {
+          if (xhttp.status == 409) {
+            showNotification("Account already exists", "error");
+          } else {
+            showNotification("Registration failed. Please try again", "error");
+          }
+        }
+      };
+
+      xhttp.onerror = function () {
+        document.getElementById("loading-screen").remove();
+        showNotification("Network error occurred", "error");
+      };
+
+      xhttp.send(JSON.stringify(requestData));
+        document.body.removeChild(loadingDiv);
+        console.log("Form submitted successfully");
+        window.location.href = 'homepage.html';
     }
   });
 

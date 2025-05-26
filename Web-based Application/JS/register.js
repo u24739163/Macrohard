@@ -75,8 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Password validation
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!password) {
       passwordGroup.classList.add("error");
       document.getElementById("passwordError").textContent =
@@ -97,12 +96,59 @@ document.addEventListener("DOMContentLoaded", function () {
       loadingDiv.innerHTML = '<div class="loader"></div>';
       document.body.appendChild(loadingDiv);
 
+      const requestData = {
+        name: firstName,
+        surname: lastName,
+        email: email,
+        password: password,
+        type: "Register",
+      };
+
       // Simulate API call (replace with actual API call)
-      setTimeout(() => {
+      const xhttp = new XMLHttpRequest();
+      xhttp.open("POST", "https://wheatley.cs.up.ac.za/u24739163/api.php", true);
+      xhttp.setRequestHeader("Content-Type", "application/json");
+      xhttp.setRequestHeader("Accept", "application/json");
+
+      xhttp.onload = function () {
+        document.getElementById("loading-screen").remove();
+
+        if (xhttp.status >= 200 && xhttp.status < 300) {
+          const response = JSON.parse(xhttp.responseText);
+          try {
+            if (response.success === "Success") {
+              //document.getElementById("signupForm").replaceWith(message);
+              localStorage.setItem("apiKey", response.data.Apikey);
+              window.location.href = "homepage.html";
+            } else {
+              showNotification(
+                response.data.message || "Registration failed",
+                "error"
+              );
+            }
+          } catch (e) {
+            showNotification(
+              "An error occurred while processing your request",
+              "error"
+            );
+          }
+        } else {
+          if (xhttp.status == 409) {
+            showNotification("Account already exists", "error");
+          } else {
+            showNotification("Registration failed. Please try again", "error");
+          }
+        }
+      };
+
+      xhttp.onerror = function () {
+        document.getElementById("loading-screen").remove();
+        showNotification("Network error occurred", "error");
+      };
+
+      xhttp.send(JSON.stringify(requestData));
         document.body.removeChild(loadingDiv);
         console.log("Form submitted successfully");
-        // window.location.href = 'products.html';
-      }, 1500);
     }
   });
 
@@ -127,3 +173,38 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("passwordError").style.display = "none";
   });
 });
+
+// Notification system
+function showNotification(message, type = 'success') {
+  if (!document.querySelector('.notification-container')) {
+      const container = document.createElement('div');
+      container.className = 'notification-container';
+      document.body.appendChild(container);
+  }
+
+  const container = document.querySelector('.notification-container');
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  
+  const messageSpan = document.createElement('span');
+  messageSpan.textContent = message;
+  
+  const closeButton = document.createElement('button');
+  closeButton.className = 'notification-close';
+  closeButton.innerHTML = '&times;';
+  closeButton.addEventListener('click', () => {
+      notification.classList.remove('show');
+      setTimeout(() => notification.remove(), 300);
+  });
+  
+  notification.appendChild(messageSpan);
+  notification.appendChild(closeButton);
+  container.appendChild(notification);
+  
+  setTimeout(() => notification.classList.add('show'), 10);
+
+  setTimeout(() => {
+      notification.classList.remove('show');
+      setTimeout(() => notification.remove(), 300);
+  }, 5000);
+}
