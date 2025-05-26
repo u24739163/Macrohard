@@ -139,6 +139,9 @@ Register
         if (!preg_match('/^[a-z0-9]{10,32}$/', $testing)) {
             return false;
         }
+        if($testing==""){
+            return false;
+        }
 
         $stmt = $this->conn->prepare("SELECT `UserID` FROM `User` WHERE Apikey = ?");
         $stmt->bind_param("s",$testing);
@@ -276,7 +279,6 @@ Register
             $rating=$avgResult->fetch_assoc();
             $retailerRow['Rating']=$rating['Stars'];
             $retailers[] = $retailerRow;
-            
         }
 
         // Add images to the result
@@ -342,7 +344,7 @@ Register
         $returner = [];
         $Products=[];
         foreach ($products as $productId) {
-            $Products['Product']=$this->returnTHEARRAY($productId);
+            $Products[]=$this->returnTHEARRAY($productId);
         }
         $returner['Products']=$Products;
         
@@ -374,7 +376,16 @@ Register
     }
 
     function wishlistA($addition,$apikey,$product){
+        if (!$this->IsAPiValid($apikey)) {
+            http_response_code(400);
+            $this->response("false", "Nice Apikey");
+            return;
+        }
         $id=$this->keyToId($apikey);
+        if($id==false){
+
+            return $this->response(false,"Invalid Apikey");
+        }
         if (empty($addition) || !preg_match('/^add|remove$/', $addition)) {
             return $this->response(false,"Invalid addition parameter");
         }
@@ -399,6 +410,99 @@ Register
         $stmt->close();
         return $this->response(true,"Removed successfully");
     }
+
+    /*
+    Get Categories
+    */
+    Function GetCat(){
+        $categories = [];
+
+        $result = $this->conn->query("SELECT * FROM `Category`");
+
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $categories[] = $row;
+            }
+            $result->free();
+            $this->response("Success",$categories);
+        }else{
+            http_response_code(400);
+            $this->response("false","Failed");
+        }
+
+    }
+
+    /*
+    Add Review
+    */
+
+    Function AddReview($apikey,$retailerId,$Product,$Rating,$Comment){
+        if (!$this->IsAPiValid($apikey)) {
+            http_response_code(400);
+            $this->response("false", "Nice Apikey");
+            return;
+        }
+        
+        $userId=$this->keyToId($apikey);
+        if($userId==null){
+            return;
+        }
+        if ($retailerId === null || $retailerId === "") {
+            $stmt = $this->conn->prepare("INSERT INTO `Review` (`Rating`, `Retailer_ID`, `Product_ID`, `User_ID`, `Review_Date`, `Comment`) VALUES ( ?, NULL, ?, ?, NOW(), ?)");
+            if (!$stmt) {
+            http_response_code(500);
+            $this->response("false", "Prepare failed (with retailer): " . $this->conn->error);
+            return;
+        }
+            $stmt->bind_param("diis", $Rating, $Product, $userId, $Comment);
+        } else {
+            $stmt = $this->conn->prepare("INSERT INTO `Review` (`Rating`, `Retailer_ID`, `Product_ID`, `User_ID`, `Review_Date`, `Comment`) VALUES ( ?, ?, ?, ?, NOW(), ?)");
+            if (!$stmt) {
+            http_response_code(500);
+            $this->response("false", "Prepare failed (with retailer): " . $this->conn->error);
+            return;
+        }
+            $stmt->bind_param("diiis", $Rating, $retailerId, $Product, $userId, $Comment);
+        }
+
+        if ($stmt->execute()) {
+            $insertedId = $stmt->insert_id;
+            $stmt->close();
+            $this->responseSucc("Success", "Inserted with ID: ".$insertedId);
+        } else {
+            $stmt->close();
+            if ($retailerId === null || $retailerId === "") {
+                $stmt = $this->conn->prepare("UPDATE `Review` SET `Rating`=?,`Review_Date`=NOW(), `Comment`=?
+                 WHERE `Product_ID`=? AND `User_ID`=? ");
+                if (!$stmt) {
+                    http_response_code(500);
+                    $this->response("false", "Prepare failed (with retailer): " . $this->conn->error);
+                    return;
+                }
+                $stmt->bind_param("dsii", $Rating,$Comment, $Product, $userId );
+                $stmt->execute();
+                $insertedId = $stmt->insert_id;
+                $this->responseSucc("Success", "Update ID: ".$insertedId);
+                $stmt->close();
+                return;
+            } else {
+                $stmt = $this->conn->prepare("UPDATE `Review` SET `Rating`=?,`Review_Date`=NOW(), `Comment`=?
+                 WHERE `Retailer_ID`=? AND `Product_ID`=? AND `User_ID`=? ");
+                if (!$stmt) {
+                    http_response_code(500);
+                    $this->response("false", "Prepare failed (with retailer): " . $this->conn->error);
+                    return;
+                }
+                $stmt->bind_param("dsiii", $Rating, $Comment, $retailerId, $Product, $userId);
+                $stmt->execute();
+                $insertedId = $stmt->insert_id;
+                $this->responseSucc("Success", "Update ID: ".$insertedId);
+                $stmt->close();
+                return;
+            }
+        }
+
+    }
 }
 
 $api = API::instance();
@@ -414,7 +518,7 @@ if (isset($data['type']) && $data['type'] === "Register") {
         if ($key == "Email already exists.") {
             
             $api->response(false, "Invalid email format try again");
-            http_response_code(401);    
+            http_response_code(409);    
         } else if ($key == "Name and surname must contain only letters.") {
             
             $api->response(false, "Invalid name/surname format.");
@@ -433,6 +537,7 @@ if (isset($data['type']) && $data['type'] === "Register") {
             $api->response(false, "Invalid type.");
             
         } else {
+            http_response_code(200);
             $api->responseKey(true, $key);
         }
     }else{
@@ -451,7 +556,7 @@ if (isset($data['type']) && $data['type'] === "Register") {
         if ($key == "Email already exists.") {
             
             $api->response(false, "Invalid email format try again");
-            http_response_code(401);    
+            http_response_code(409);    
         } else if ($key == "Name and surname must contain only letters.") {
             
             $api->response(false, "Invalid name/surname format.");
@@ -486,8 +591,17 @@ if (isset($data['type']) && $data['type'] === "Register") {
     $api->wishlistA($data['ADDITION'],$data['apikey'],$data['Product']);
 }else if(isset($data['type']) && $data['type']==="Wishlist" && isset($data['apikey'])){
     $api->wishlist($data['apikey']);
+}else if(isset($data['type']) && $data['type']==="Cat"){
+    $api->GetCat();
+}else if(isset($data['type']) && $data['type'] === "AddReview" &&
+    isset($data['retailer']) &&
+    isset($data['Product']) &&
+    isset($data['Rating']) &&
+    isset($data['Comment'])
+){
+    $api->AddReview($data['apikey'],$data['retailer'],$data['Product'],$data['Rating'],$data['Comment']);
 }else if(isset($data['type']) && $data['type']==="Wishlist" && !isset($data['apikey'])){
-    http_response_code(401);
+    http_response_code(400);
     $api->response("False","Register first");
 }
 ?>
