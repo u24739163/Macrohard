@@ -66,12 +66,21 @@ async function loadProductDetails() {
                     caption: img.Caption
                 })),
                 prices: data.data.Retailers.map(retailer => ({
-                    retailer: retailer.Retailer,
+                    retailer_name: retailer.Retailer,
                     price: retailer.Price,
-                    url: retailer.link,
+                    product_url: retailer.link,
                     logo_url: retailer.logo,
-                    availability: 'in_stock'
-                }))
+                    shipping_cost: null,
+                    availability: 'In Stock',
+                    retailer_id: retailer.RID
+                })),
+                reviews: data.data.Reviewers ? data.data.Reviewers.map(review => ({
+                    rating: parseFloat(review.STARS),
+                    user_name: review.FirstName,
+                    date_posted: review.Review_Date,
+                    title: "",  // Default empty title since it's not in the response
+                    content: review.Comment
+                })) : []
             };
             console.log('Transformed data:', transformedData);
             
@@ -124,6 +133,14 @@ function displayProductData(product) {
     
     // Update related products
     displayRelatedProducts(product.related_products);
+
+    // Update reviews - check if reviews exist in the response
+    if (product.reviews && product.reviews.length > 0) {
+        displayReviews(product.reviews);
+    } else {
+        // If no reviews in initial load, fetch them separately
+        fetchProductReviews();
+    }
 }
 
 /**
