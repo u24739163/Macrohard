@@ -1,3 +1,4 @@
+const API_LINK = "https://wheatley.cs.up.ac.za/u24739163/api.php";
 document.addEventListener("DOMContentLoaded", function () {
   const productsGrid = document.querySelector(".products-grid");
 
@@ -34,8 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(loadingDiv);
 
     const xhttp = new XMLHttpRequest();
-    xhttp.open(
-      "POST", "https://wheatley.cs.up.ac.za/u24739163/api.php", true);
+    xhttp.open("POST", API_LINK, true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.setRequestHeader("Accept", "application/json");
 
@@ -172,7 +172,6 @@ document.addEventListener("DOMContentLoaded", function () {
         image: "https://via.placeholder.com/200x150?text=Product+5",
         merchants: ["Amazon", "Best Buy"],
       },
-      
     ];
 
     productsGrid.innerHTML = "";
