@@ -2,19 +2,22 @@
  * view.js - JavaScript for Product View Page
  */
 
-// Get product ID from URL
-const urlParams = new URLSearchParams(window.location.search);
-const productId = urlParams.get('id');
+// Get product ID from localStorage instead of URL
+const productId = localStorage.getItem('selectedProductId');
 
 // API configuration
-const API_URL = 'Requested.php'; // Update this when VioletAbyss gives you the actual endpoint
+const API_URL = 'Requested.php'; // API endpoint. Main one
 
-// Initialize page when DOM loads
+// Initialize page when `DOM` loads
 document.addEventListener('DOMContentLoaded', function() {
     if (!productId) {
+        console.error('No product ID found in localStorage');
         window.location.href = 'products.php';
         return;
     }
+    
+    // Clear the product ID from localStorage after retrieving it
+    localStorage.removeItem('selectedProductId');
     
     // Load product data
     loadProductDetails();
@@ -434,15 +437,22 @@ function initializeGallery() {
  */
 function initializeWishlist() {
     const wishlistBtn = document.getElementById('add-to-wishlist');
+    if (!wishlistBtn) return;
+    
+    // Check if item is in wishlist on page load
+    checkWishlistStatus();
     
     wishlistBtn.addEventListener('click', async function() {
         const apiKey = sessionStorage.getItem('apiKey');
         
         if (!apiKey) {
-            alert('Please login to add items to wishlist');
+            alert('Please login to manage your wishlist');
             window.location.href = 'login.php?redirect=view.php?id=' + productId;
             return;
         }
+        
+        const isInWishlist = this.classList.contains('added');
+        const action = isInWishlist ? 'remove' : 'add';
         
         try {
             const response = await fetch(API_URL, {
@@ -451,9 +461,10 @@ function initializeWishlist() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    type: 'AddToWishlist',
+                    type: "Wishlist",
                     apikey: apiKey,
-                    product_id: productId
+                    Product: productId,
+                    ADDITION: action
                 })
             });
             
@@ -464,8 +475,12 @@ function initializeWishlist() {
                 this.innerHTML = this.classList.contains('added') 
                     ? '<i class="fas fa-heart"></i> Remove from Wishlist'
                     : '<i class="far fa-heart"></i> Add to Wishlist';
+                
+                // Show feedback message
+                const message = isInWishlist ? 'Removed from wishlist' : 'Added to wishlist';
+                showNotification(message);
             } else {
-                alert('Error adding to wishlist');
+                alert('Error: ' + (data.data || 'Failed to update wishlist'));
             }
         } catch (error) {
             console.error('Error:', error);
@@ -475,55 +490,151 @@ function initializeWishlist() {
 }
 
 /**
+ * Check if the current product is in the user's wishlist
+ */
+async function checkWishlistStatus() {
+    const wishlistBtn = document.getElementById('add-to-wishlist');
+    if (!wishlistBtn) return;
+    
+    const apiKey = sessionStorage.getItem('apiKey');
+    if (!apiKey) return;
+    
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: "Wishlist",
+                apikey: apiKey,
+                Product: productId,
+                ADDITION: "check"
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success === "success" && data.data === true) {
+            wishlistBtn.classList.add('added');
+            wishlistBtn.innerHTML = '<i class="fas fa-heart"></i> Remove from Wishlist';
+        }
+    } catch (error) {
+        console.error('Error checking wishlist status:', error);
+    }
+}
+
+/**
+ * Show a temporary notification message
+ */
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Trigger animation
+    setTimeout(() => notification.classList.add('show'), 10);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+/**
  * Initialize review form
  */
 function initializeReviewForm() {
     const reviewForm = document.getElementById('review-form');
+    if (!reviewForm) return;
+
+    // Initialize star rating interaction
+    const ratingInputs = reviewForm.querySelectorAll('.rating-input input[type="radio"]');
+    const ratingLabels = reviewForm.querySelectorAll('.rating-input label');
     
-    if (reviewForm) {
-        reviewForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const apiKey = sessionStorage.getItem('apiKey');
-            
-            if (!apiKey) {
-                alert('Please login to submit a review');
-                window.location.href = 'login.php?redirect=view.php?id=' + productId;
-                return;
-            }
-            
-            const formData = new FormData(reviewForm);
-            const reviewData = {
-                type: 'AddReview',
-                apikey: apiKey,
-                product_id: productId,
-                rating: formData.get('rating'),
-                title: formData.get('title'),
-                content: formData.get('content')
-            };
-            
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(reviewData)
-                });
-                
-                const data = await response.json();
-                
-                if (data.success === "success") {
-                    alert('Review submitted successfully!');
-                    reviewForm.reset();
-                    loadProductDetails(); // Reload to show new review
-                } else {
-                    alert('Error submitting review');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error connecting to server');
-            }
+    ratingLabels.forEach((label, index) => {
+        label.addEventListener('mouseover', () => {
+            // Fill stars up to this one
+            ratingLabels.forEach((l, i) => {
+                l.querySelector('i').className = i <= index ? 'fas fa-star' : 'far fa-star';
+            });
         });
-    }
+        
+        label.addEventListener('mouseout', () => {
+            // Reset to selected rating
+            const selectedRating = reviewForm.querySelector('input[name="rating"]:checked')?.value || 0;
+            ratingLabels.forEach((l, i) => {
+                l.querySelector('i').className = i < selectedRating ? 'fas fa-star' : 'far fa-star';
+            });
+        });
+    });
+
+    reviewForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const apiKey = sessionStorage.getItem('apiKey');
+        if (!apiKey) {
+            alert('Please login to submit a review');
+            window.location.href = 'login.php?redirect=view.php?id=' + productId;
+            return;
+        }
+
+        // Get form data
+        const rating = reviewForm.querySelector('input[name="rating"]:checked')?.value;
+        const title = reviewForm.querySelector('input[name="title"]')?.value.trim();
+        const content = reviewForm.querySelector('textarea[name="content"]')?.value.trim();
+
+        // Validate form data
+        if (!rating) {
+            alert('Please select a rating');
+            return;
+        }
+        if (!title) {
+            alert('Please enter a review title');
+            return;
+        }
+        if (!content) {
+            alert('Please enter your review content');
+            return;
+        }
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: 'AddReview',
+                    apikey: apiKey,
+                    product_id: productId,
+                    rating: parseInt(rating),
+                    title: title,
+                    content: content
+                })
+            });
+
+            const data = await response.json();
+            
+            if (data.success === "success") {
+                // Show success message
+                showNotification('Review submitted successfully!');
+                
+                // Reset form
+                reviewForm.reset();
+                ratingLabels.forEach(l => l.querySelector('i').className = 'far fa-star');
+                
+                // Reload product details to show new review
+                loadProductDetails();
+            } else {
+                alert('Error: ' + (data.data || 'Failed to submit review'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error connecting to server');
+        }
+    });
 }
