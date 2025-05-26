@@ -75,7 +75,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Password validation
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!password) {
       passwordGroup.classList.add("error");
       document.getElementById("passwordError").textContent =
@@ -106,7 +107,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Simulate API call (replace with actual API call)
       const xhttp = new XMLHttpRequest();
-      xhttp.open("POST", "https://wheatley.cs.up.ac.za/u24739163/api.php", true);
+      xhttp.open(
+        "POST",
+        "https://wheatley.cs.up.ac.za/u24739163/api.php",
+        true
+      );
       xhttp.setRequestHeader("Content-Type", "application/json");
       xhttp.setRequestHeader("Accept", "application/json");
 
@@ -147,8 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       xhttp.send(JSON.stringify(requestData));
-        document.body.removeChild(loadingDiv);
-        console.log("Form submitted successfully");
+      console.log("Form submitted successfully");
     }
   });
 
@@ -175,36 +179,37 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Notification system
-function showNotification(message, type = 'success') {
-  if (!document.querySelector('.notification-container')) {
-      const container = document.createElement('div');
-      container.className = 'notification-container';
-      document.body.appendChild(container);
+function showNotification(message, type = "success") {
+  console.log("Loadinf notif");
+  if (!document.querySelector(".notification-container")) {
+    const container = document.createElement("div");
+    container.className = "notification-container";
+    document.body.appendChild(container);
   }
 
-  const container = document.querySelector('.notification-container');
-  const notification = document.createElement('div');
+  const container = document.querySelector(".notification-container");
+  const notification = document.createElement("div");
   notification.className = `notification ${type}`;
-  
-  const messageSpan = document.createElement('span');
+
+  const messageSpan = document.createElement("span");
   messageSpan.textContent = message;
-  
-  const closeButton = document.createElement('button');
-  closeButton.className = 'notification-close';
-  closeButton.innerHTML = '&times;';
-  closeButton.addEventListener('click', () => {
-      notification.classList.remove('show');
-      setTimeout(() => notification.remove(), 300);
+
+  const closeButton = document.createElement("button");
+  closeButton.className = "notification-close";
+  closeButton.innerHTML = "&times;";
+  closeButton.addEventListener("click", () => {
+    notification.classList.remove("show");
+    setTimeout(() => notification.remove(), 300);
   });
-  
+
   notification.appendChild(messageSpan);
   notification.appendChild(closeButton);
   container.appendChild(notification);
-  
-  setTimeout(() => notification.classList.add('show'), 10);
+
+  setTimeout(() => notification.classList.add("show"), 10);
 
   setTimeout(() => {
-      notification.classList.remove('show');
-      setTimeout(() => notification.remove(), 300);
+    notification.classList.remove("show");
+    setTimeout(() => notification.remove(), 300);
   }, 5000);
 }
