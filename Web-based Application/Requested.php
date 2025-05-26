@@ -182,7 +182,7 @@ Register
             return;
         }
 
-        $stmt = $this->conn->prepare("SELECT `UserID`,`Salt`,`PasswordHash`,`Apikey`,`Type` FROM `User` WHERE Email = ?");
+        $stmt = $this->conn->prepare("SELECT `UserID`,`Salt`,`PasswordHash`,`Apikey`,`Type`,`ThemeID` FROM `User` WHERE Email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result=$stmt->get_result();
@@ -298,6 +298,107 @@ Register
         $stmt->close();
 
     }
+
+    /*
+    Converts the Apikey to an ID
+    */
+    function keyToId($apikey){
+        $stmt = $this->conn->prepare("SELECT `UserID` FROM `User` WHERE  `Apikey`= ?");
+        $stmt->bind_param("s", $apikey);
+        $stmt->execute();
+        $result=$stmt->get_result();
+        $row=$result->fetch_assoc();
+        if(!$row){
+            $stmt->close();
+            return;
+        }else{
+            $id=$row['UserID'];
+        }
+        $stmt->close();
+        return $id;
+    }
+
+
+    /*
+    Wishlist Handling
+    */
+    function wishlist($apikey){
+        if(!$this->IsAPiValid($apikey)){
+            http_response_code(401);
+            $this->response("false","Nice Apikey");
+            return;
+        }
+        $id=$this->keyToId($apikey);
+        $stmt=$this->conn->prepare("SELECT `ProductID` FROM `Wishlist` WHERE `UserID`=?");
+        $stmt->bind_param("i",$id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $products=[];
+        while ($row = $result->fetch_assoc()){
+            $products[]=$row['ProductID'];
+        }
+        
+        $stmt->close();
+        $returner = [];
+        $Products=[];
+        foreach ($products as $productId) {
+            $Products['Product']=$this->returnTHEARRAY($productId);
+        }
+        $returner['Products']=$Products;
+        
+        $this->response("true", $returner);
+        $stmt->close();
+    }
+
+    function returnTHEARRAY($id){
+        $returner=[];
+        $stmt=$this->conn->prepare("SELECT P.`ProductID`,P.`Name` FROM Product AS P WHERE `P`.`ProductID`=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result(); 
+        $returner = $result->fetch_assoc();
+        $stmt->close();
+        $stmt=$this->conn->prepare("SELECT MIN(`Price`) AS Price FROM Sells where `Product_ID`=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $Priceresult = $stmt->get_result(); 
+        $Price= $Priceresult->fetch_assoc();
+        $stmt=$this->conn->prepare("SELECT `ImageURL`,`Caption` FROM `Image` WHERE `ProductID`=? LIMIT 1");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $ImageResult = $stmt->get_result(); 
+        $Image= $ImageResult->fetch_assoc();
+        $returner['Price']=$Price['Price'];
+        $returner['Image']=$Image;
+        return $returner;
+    }
+
+    function wishlistA($addition,$apikey,$product){
+        $id=$this->keyToId($apikey);
+        if (empty($addition) || !preg_match('/^add|remove$/', $addition)) {
+            return $this->response(false,"Invalid addition parameter");
+        }
+
+        if (!preg_match('/^\d+$/', $product)) {
+            return $this->response(false, "Invalid product parameter");
+        }
+
+        if($addition==add){
+            $stmt = $this->conn->prepare("INSERT INTO  `Wishlist`(`UserID`, `ProductID`, `DateAdded`) VALUES ( ?, ?, NOW())");
+            $stmt->bind_param("ii",$id,$product);
+            $stmt->execute();
+            $stmt->close();
+            return $this->response(true,"Added successfully");
+        }
+        $stmt = $this->conn->prepare("DELETE FROM `Wishlist` WHERE `UserID`=? AND `ProductID`=?");
+        /*echo $id;
+        echo"|";
+        echo $product;*/
+        $stmt->bind_param("ii",$id,$product);
+        $stmt->execute();
+        $stmt->close();
+        return $this->response(true,"Removed successfully");
+    }
 }
 
 $api = API::instance();
@@ -381,5 +482,12 @@ if (isset($data['type']) && $data['type'] === "Register") {
     return;
 }else if(isset($data['type']) && $data['type']==="View"){
     $api->view($data['ID']);
+}else if(isset($data['type']) && $data['type']==="Wishlist" && isset($data['ADDITION']) && isset($data['apikey']) && isset($data['Product'])){
+    $api->wishlistA($data['ADDITION'],$data['apikey'],$data['Product']);
+}else if(isset($data['type']) && $data['type']==="Wishlist" && isset($data['apikey'])){
+    $api->wishlist($data['apikey']);
+}else if(isset($data['type']) && $data['type']==="Wishlist" && !isset($data['apikey'])){
+    http_response_code(401);
+    $api->response("False","Register first");
 }
 ?>
