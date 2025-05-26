@@ -275,7 +275,7 @@ try {
                                     <?php if (isset($_SESSION['user_id'])): ?>
                                         <div class="write-review">
                                             <h3>Write a Review</h3>
-                                            <form id="review-form" method="POST" action="submit_review.php">
+                                            <form id="review-form">
                                                 <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
                                                 <div class="rating-input">
                                                     <?php for ($i = 5; $i >= 1; $i--): ?>
@@ -283,7 +283,14 @@ try {
                                                         <label for="star<?php echo $i; ?>"><i class="fas fa-star"></i></label>
                                                     <?php endfor; ?>
                                                 </div>
-                                                <textarea name="review_text" placeholder="Write your review here..." required></textarea>
+                                                <!-- Remove title field if it exists -->
+                                                <textarea name="comment" placeholder="Write your review here..." required></textarea>
+                                                <select name="retailer" required>
+                                                    <option value="">Select Retailer</option>
+                                                    <?php foreach ($prices as $price): ?>
+                                                        <option value="<?php echo $price['retailer_id']; ?>"><?php echo htmlspecialchars($price['retailer']); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
                                                 <button type="submit" class="btn primary-btn">Submit Review</button>
                                             </form>
                                         </div>
