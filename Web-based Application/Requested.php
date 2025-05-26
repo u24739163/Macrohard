@@ -160,7 +160,110 @@ Register
     GetProducts
     */
 
+    
+    //SELECT P.`ProductID`,P.`Name`,P.`Description`,P.`Specifications`,B.Name,C.Name FROM Category AS C JOIN( Product AS P JOIN Brand AS B ON P.BrandID=B.BrandID) ON C.CategoryID=P.CategoryID
+    //SELECT MIN(`Price`) AS LowestPrice FROM Sells where `Product_ID`=6;
+    
+    function NormalGetProducts(){
+        $result =$this->conn->query("SELECT P.`ProductID` AS `ID` ,P.`Name` AS `Name` ,B.Name AS `Brand`,C.Name AS `Category` 
+        FROM Category AS C JOIN( Product AS P JOIN Brand AS B ON P.BrandID=B.BrandID)
+         ON C.CategoryID=P.CategoryID ORDER BY RAND() LIMIT 300 ");
 
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $additions=$this->GetAddition($row['ID']);
+                $row['Price']=$additions['Price'];
+                $row['Image']=$additions['Image'];
+                $Product[] = $row;
+            }
+            $returner['Products']=$Product;
+            $result->free();
+            $this->response("Success",$returner);
+            return;
+        }
+        http_response_code(500);
+        $this->response("false","Unknown error has occurred");
+        
+    }
+
+    function Brand($Brand){
+        if(!is_numeric($Brand)){
+            http_response_code(400);
+            $this->response("false","Incorrect category id.");
+            return;
+        }
+        $stmt=$this->conn->prepare("SELECT P.`ProductID` AS `ID` ,P.`Name` AS `Name` ,B.Name AS `Brand`,C.Name AS `Category` 
+        FROM Category AS C JOIN( Product AS P JOIN Brand AS B ON P.BrandID=B.BrandID)
+         ON C.CategoryID=P.CategoryID WHERE B.BrandID=? LIMIT 300 ");
+        $stmt->bind_param("i",$Brand);
+        $stmt->execute();
+        $result=$stmt->get_result();
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $additions=$this->GetAddition($row['ID']);
+                $row['Price']=$additions['Price'];
+                $row['Image']=$additions['Image'];
+                $Product[] = $row;
+            }
+            $returner['Products']=$Product;
+            $result->free();
+            $this->response("Success",$returner);
+            return;
+        }
+        http_response_code(500);
+        $this->response("false","Unknown error has occurred");
+
+    }
+
+    function Search($Search){
+        $stmt=$this->conn->prepare("SELECT 
+            P.`ProductID` AS `ID`,
+            P.`Name` AS `Name`,
+            B.`Name` AS `Brand`,
+            C.`Name` AS `Category`
+        FROM 
+            Category AS C
+            JOIN (Product AS P JOIN Brand AS B ON P.BrandID = B.BrandID)
+                ON C.CategoryID = P.CategoryID
+        WHERE 
+            P.`Name` LIKE CONCAT('%', ?, '%')
+        LIMIT 300;");
+        
+        $stmt->bind_param("s",$Search);
+        $stmt->execute();
+        $result=$stmt->get_result();
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $additions=$this->GetAddition($row['ID']);
+                $row['Price']=$additions['Price'];
+                $row['Image']=$additions['Image'];
+                $Product[] = $row;
+            }
+            $returner['Products']=$Product;
+            $result->free();
+            $this->response("Success",$returner);
+            return;
+        }
+        http_response_code(500);
+        $this->response("false","Unknown error has occurred");
+    }
+
+    function GetAddition($id){
+        $stmt=$this->conn->prepare("SELECT MIN(`Price`) AS Price FROM Sells where `Product_ID`=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $Priceresult = $stmt->get_result(); 
+        $Price= $Priceresult->fetch_assoc();
+        $stmt=$this->conn->prepare("SELECT `ImageURL`,`Caption` FROM `Image` WHERE `ProductID`=? LIMIT 1");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $ImageResult = $stmt->get_result(); 
+        $Image= $ImageResult->fetch_assoc();
+        $returner['Price']=$Price['Price'];
+        $returner['Image']=$Image;
+        return $returner;
+    }
+    
 
     /*
     login
@@ -623,5 +726,11 @@ if (isset($data['type']) && $data['type'] === "Register") {
 }else if(isset($data['type']) && $data['type']==="Wishlist" && !isset($data['apikey'])){
     http_response_code(400);
     $api->response("False","Register first");
+}else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Search'])){
+    $api->Search($data['Search']);
+}else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Brands'])){
+    $api->Brand($data['Brand']);
+}else if(isset($data['type']) && $data['type']==="GetProducts"){
+    $api->NormalGetProducts();
 }
 ?>
