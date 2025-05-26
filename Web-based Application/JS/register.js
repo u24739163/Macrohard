@@ -116,14 +116,12 @@ document.addEventListener("DOMContentLoaded", function () {
       xhttp.setRequestHeader("Accept", "application/json");
 
       xhttp.onload = function () {
-        document.getElementById("loading-screen").remove();
-
         if (xhttp.status >= 200 && xhttp.status < 300) {
           const response = JSON.parse(xhttp.responseText);
           try {
-            if (response.success === "Success") {
+            if (response.success === true) {
               //document.getElementById("signupForm").replaceWith(message);
-              localStorage.setItem("apiKey", response.data.Apikey);
+              localStorage.setItem("apiKey", response.data.key);
               window.location.href = "homepage.html";
             } else {
               showNotification(
