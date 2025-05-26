@@ -160,9 +160,6 @@ Register
     GetProducts
     */
 
-    //SELECT P.`ProductID`,P.`Name`,P.`Description`,P.`Specifications`,B.Name,C.Name FROM Category AS C JOIN( Product AS P JOIN Brand AS B ON P.BrandID=B.BrandID) ON C.CategoryID=P.CategoryID
-    //SELECT MIN(`Price`) AS LowestPrice FROM Sells where `Product_ID`=6;
-    //
 
 
     /*
@@ -433,6 +430,27 @@ Register
     }
 
     /*
+    Get Brands
+    */
+    Function GetBrand(){
+        $categories = [];
+
+        $result = $this->conn->query("SELECT * FROM `Brand`");
+
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $categories[] = $row;
+            }
+            $result->free();
+            $this->response("Success",$categories);
+        }else{
+            http_response_code(400);
+            $this->response("false","Failed");
+        }
+
+    }
+
+    /*
     Add Review
     */
 
@@ -593,6 +611,8 @@ if (isset($data['type']) && $data['type'] === "Register") {
     $api->wishlist($data['apikey']);
 }else if(isset($data['type']) && $data['type']==="Cat"){
     $api->GetCat();
+}else if(isset($data['type']) && $data['type']==="Brands"){
+    $api->GetBrand();
 }else if(isset($data['type']) && $data['type'] === "AddReview" &&
     isset($data['retailer']) &&
     isset($data['Product']) &&
