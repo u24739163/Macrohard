@@ -3,7 +3,7 @@
  */
 
 // Get product ID from localStorage instead of URL
-const productId = localStorage.getItem('selectedProductId');
+const productId = localStorage.getItem('id');
 
 // API configuration
 const API_URL = 'Requested.php'; // API endpoint. Main one
