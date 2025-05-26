@@ -159,10 +159,6 @@ Register
     /*
     GetProducts
     */
-
-    
-    //SELECT P.`ProductID`,P.`Name`,P.`Description`,P.`Specifications`,B.Name,C.Name FROM Category AS C JOIN( Product AS P JOIN Brand AS B ON P.BrandID=B.BrandID) ON C.CategoryID=P.CategoryID
-    //SELECT MIN(`Price`) AS LowestPrice FROM Sells where `Product_ID`=6;
     
     function NormalGetProducts(){
         $result =$this->conn->query("SELECT P.`ProductID` AS `ID` ,P.`Name` AS `Name` ,B.Name AS `Brand`,C.Name AS `Category` 
@@ -173,6 +169,9 @@ Register
             while ($row = $result->fetch_assoc()) {
                 $additions=$this->GetAddition($row['ID']);
                 $row['Price']=$additions['Price'];
+                $row['Stars']=$additions['Stars'];
+                $row['NumReviews']=$additions['NumReviews'];
+                $row['Retailers']=$additions['Retailers'];
                 $row['Image']=$additions['Image'];
                 $Product[] = $row;
             }
@@ -202,6 +201,9 @@ Register
             while ($row = $result->fetch_assoc()) {
                 $additions=$this->GetAddition($row['ID']);
                 $row['Price']=$additions['Price'];
+                $row['Stars']=$additions['Stars'];
+                $row['NumReviews']=$additions['NumReviews'];
+                $row['Retailers']=$additions['Retailers'];
                 $row['Image']=$additions['Image'];
                 $Product[] = $row;
             }
@@ -236,16 +238,280 @@ Register
             while ($row = $result->fetch_assoc()) {
                 $additions=$this->GetAddition($row['ID']);
                 $row['Price']=$additions['Price'];
+                $row['Stars']=$additions['Stars'];
+                $row['NumReviews']=$additions['NumReviews'];
+                $row['Retailers']=$additions['Retailers'];
                 $row['Image']=$additions['Image'];
                 $Product[] = $row;
             }
             $returner['Products']=$Product;
             $result->free();
             $this->response("Success",$returner);
+            $stmt->close();
             return;
         }
         http_response_code(500);
         $this->response("false","Unknown error has occurred");
+    }
+
+    function OnlyCat($Cat){
+        $categoryIds = $this->GetCatID($Cat);
+        if (!is_array($categoryIds)) {
+            $categoryIds = [$categoryIds];
+        }
+        $returner = [];
+        $products = [];
+        foreach ($categoryIds as $catId) {
+            $stmt = $this->conn->prepare("SELECT 
+                P.`ProductID` AS `ID`,
+                P.`Name` AS `Name`,
+                B.Name AS `Brand`,
+                C.Name AS `Category`
+            FROM 
+                Category AS C 
+                JOIN (Product AS P JOIN Brand AS B ON P.BrandID = B.BrandID)
+                ON C.CategoryID = P.CategoryID
+            WHERE 
+                C.CategoryID = ?
+            LIMIT 300");
+            if (!$stmt) {
+                http_response_code(500);
+                $this->response("false", "Prepare failed: " . $this->conn->error);
+                return;
+            }
+            $stmt->bind_param("i", $catId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    $additions = $this->GetAddition($row['ID']);
+                    $row['Price'] = $additions['Price'];
+                    $row['Stars'] = $additions['Stars'];
+                    $row['NumReviews']=$additions['NumReviews'];
+                    $row['Retailers']=$additions['Retailers'];
+                    $row['Image'] = $additions['Image'];
+                    $products[] = $row;
+                }
+                $result->free();
+            }
+            $stmt->close();
+        }
+        $returner['Products'] = $products;
+        $this->response("Success", $returner);
+        return;
+    }
+
+    function BrandSearch($brandId, $search){
+        if (!is_numeric($brandId)) {
+            http_response_code(400);
+            $this->response("false", "Incorrect brand id.");
+            return;
+        }
+
+        $stmt = $this->conn->prepare("SELECT 
+            P.`ProductID` AS `ID`,
+            P.`Name` AS `Name`,
+            B.`Name` AS `Brand`,
+            C.`Name` AS `Category`
+        FROM 
+            Category AS C
+            JOIN (Product AS P JOIN Brand AS B ON P.BrandID = B.BrandID)
+                ON C.CategoryID = P.CategoryID
+        WHERE 
+            B.BrandID = ? AND P.`Name` LIKE CONCAT('%', ?, '%')
+        LIMIT 300");
+
+        $stmt->bind_param("is", $brandId, $search);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $additions = $this->GetAddition($row['ID']);
+                $row['Price'] = $additions['Price'];
+                $row['Stars'] = $additions['Stars'];
+                $row['NumReviews']=$additions['NumReviews'];
+                $row['Retailers']=$additions['Retailers'];
+                $row['Image'] = $additions['Image'];
+                $Product[] = $row;
+            }
+            $returner['Products'] = $Product;
+            $result->free();
+            $this->response("Success", $returner);
+            $stmt->close();
+            return;
+        }
+
+        http_response_code(500);
+        $this->response("false", "Unknown error has occurred");
+    }
+
+    function CategorySearch($Cat, $search){
+        if (!is_numeric($Cat)) {
+            http_response_code(400);
+            $this->response("false", "Incorrect category id.");
+            return;
+        }
+        $categoryIds = $this->GetCatID($Cat);
+        if (!is_array($categoryIds)) {
+            $categoryIds = [$categoryIds];
+        }
+        $returner = [];
+        $products = [];
+        foreach ($categoryIds as $catId) {
+
+        $stmt = $this->conn->prepare("SELECT 
+            P.`ProductID` AS `ID`,
+            P.`Name` AS `Name`,
+            B.`Name` AS `Brand`,
+            C.`Name` AS `Category`
+        FROM 
+            Category AS C
+            JOIN (Product AS P JOIN Brand AS B ON P.BrandID = B.BrandID)
+                ON C.CategoryID = P.CategoryID
+        WHERE 
+            C.CategoryID = ? AND P.`Name` LIKE CONCAT('%', ?, '%')
+        LIMIT 300");
+
+        $stmt->bind_param("is", $catId, $search);
+        $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    $additions = $this->GetAddition($row['ID']);
+                    $row['Price'] = $additions['Price'];
+                    $row['Stars'] = $additions['Stars'];
+                    $row['NumReviews']=$additions['NumReviews'];
+                    $row['Retailers']=$additions['Retailers'];
+                    $row['Image'] = $additions['Image'];
+                    $products[] = $row;
+                }
+                $result->free();
+            }
+            $stmt->close();
+        }
+        $returner['Products'] = $products;
+        $this->response("Success", $returner);
+        return;
+    }
+
+    function CategoryBrand($Cat, $Brand){
+        if (!is_numeric($Cat)) {
+            http_response_code(400);
+            $this->response("false", "Incorrect category id.");
+            return;
+        }
+        $categoryIds = $this->GetCatID($Cat);
+        if (!is_array($categoryIds)) {
+            $categoryIds = [$categoryIds];
+        }
+        $returner = [];
+        $products = [];
+        foreach ($categoryIds as $catId) {
+
+        $stmt = $this->conn->prepare("SELECT 
+            P.`ProductID` AS `ID`,
+            P.`Name` AS `Name`,
+            B.`Name` AS `Brand`,
+            C.`Name` AS `Category`
+        FROM 
+            Category AS C
+            JOIN (Product AS P JOIN Brand AS B ON P.BrandID = B.BrandID)
+                ON C.CategoryID = P.CategoryID
+        WHERE 
+            C.CategoryID = ? AND P.BrandID=?
+        LIMIT 300");
+
+        $stmt->bind_param("is", $catId, $Brand);
+        $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    $additions = $this->GetAddition($row['ID']);
+                    $row['Price'] = $additions['Price'];
+                    $row['Stars'] = $additions['Stars'];
+                    $row['NumReviews']=$additions['NumReviews'];
+                    $row['Retailers']=$additions['Retailers'];
+                    $row['Image'] = $additions['Image'];
+                    $products[] = $row;
+                }
+                $result->free();
+            }
+            $stmt->close();
+        }
+        $returner['Products'] = $products;
+        $this->response("Success", $returner);
+        return;
+    }
+
+    function CategoryBrandSearch($Cat,$Brand,$Search){
+        if (!is_numeric($Cat) || !is_numeric($Brand)) {
+            http_response_code(400);
+            $this->response("false", "Invalid category or brand ID.");
+            return;
+        }
+        $categoryIds = $this->GetCatID($Cat);
+        if (!is_array($categoryIds)) {
+            $categoryIds = [$categoryIds];
+        }
+        $returner = [];
+        $products = [];
+        foreach ($categoryIds as $catId) {
+            $stmt = $this->conn->prepare("SELECT 
+                P.`ProductID` AS `ID`,
+                P.`Name` AS `Name`,
+                B.Name AS `Brand`,
+                C.Name AS `Category`
+            FROM 
+                Category AS C 
+                JOIN (Product AS P JOIN Brand AS B ON P.BrandID = B.BrandID)
+                ON C.CategoryID = P.CategoryID
+            WHERE 
+                C.CategoryID = ? AND B.BrandID = ? AND P.`Name` LIKE CONCAT('%', ?, '%')
+            LIMIT 300");
+
+        $stmt->bind_param("iis",$catId,$Brand, $Search);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    $additions = $this->GetAddition($row['ID']);
+                    $row['Price'] = $additions['Price'];
+                    $row['Stars'] = $additions['Stars'];
+                    $row['NumReviews']=$additions['NumReviews'];
+                    $row['Retailers']=$additions['Retailers'];
+                    $row['Image'] = $additions['Image'];
+                    $products[] = $row;
+                }
+                $result->free();
+            }
+            $stmt->close();
+        }
+        $returner['Products'] = $products;
+        $this->response("Success", $returner);
+        return;
+
+    }
+
+
+
+    function GetCatID($Cat){
+        $stmt=$this->conn->prepare("SELECT `CategoryID`,`ParentCategoryID` FROM `Category` WHERE `ParentCategoryID`=?");
+        $stmt->bind_param("i", $Cat);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows === 0){
+            $stmt->close();
+            return $Cat;
+        } else {
+            $categoryIds = [];
+            while ($row = $result->fetch_assoc()) {
+                $categoryIds[] = $row['CategoryID'];
+            }
+            $result->free();
+            $stmt->close();
+            return $categoryIds;
+        }
+
     }
 
     function GetAddition($id){
@@ -254,12 +520,37 @@ Register
         $stmt->execute();
         $Priceresult = $stmt->get_result(); 
         $Price= $Priceresult->fetch_assoc();
+        $Priceresult->free();
         $stmt=$this->conn->prepare("SELECT `ImageURL`,`Caption` FROM `Image` WHERE `ProductID`=? LIMIT 1");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $ImageResult = $stmt->get_result(); 
         $Image= $ImageResult->fetch_assoc();
+        $ImageResult->free();
+        $stmt=$this->conn->prepare("SELECT ROUND(AVG(`Rating`), 1) AS Stars, COUNT(`Rating`) AS `Number`
+                FROM Review WHERE `Product_ID` =?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $RatingResult = $stmt->get_result(); 
+        $Rating= $RatingResult->fetch_assoc();
+        $RatingResult->free();
+        $stmt = $this->conn->prepare("SELECT `Name` FROM `Retailer` JOIN `Sells` ON `RetailerID` = `Retailer_ID` WHERE `Product_ID` = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $Retailersresult = $stmt->get_result();
+
+        $retailers = [];
+        if ($Retailersresult) {
+            while ($Retailersrow = $Retailersresult->fetch_assoc()) {
+                $retailers[] = $Retailersrow['Name'];
+            }
+        }
+
+        $stmt->close();
+        $returner['Retailers']=$retailers;
         $returner['Price']=$Price['Price'];
+        $returner['Stars']=$Rating['Stars'];
+        $returner['NumReviews']=$Rating['Number'];
         $returner['Image']=$Image;
         return $returner;
     }
@@ -726,6 +1017,17 @@ if (isset($data['type']) && $data['type'] === "Register") {
 }else if(isset($data['type']) && $data['type']==="Wishlist" && !isset($data['apikey'])){
     http_response_code(400);
     $api->response("False","Register first");
+
+}else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Brands']) && isset($data['Category']) && isset($data['Search'])){
+    $api->CategoryBrandSearch($data['Category'],$data['Brands'],$data['Search']);
+}else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Brands']) && isset($data['Category'])){
+    $api->CategoryBrand($data['Category'],$data['Brands']);
+}else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Search']) && isset($data['Category'])){
+    $api->CategorySearch($data['Category'],$data['Search']);
+}else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Search']) && isset($data['Brands'])){
+    $api->BrandSearch($data['Brands'],$data['Search']);
+}else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Category'])){
+    $api->OnlyCat($data['Category']);
 }else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Search'])){
     $api->Search($data['Search']);
 }else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Brands'])){
