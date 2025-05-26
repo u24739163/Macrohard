@@ -18,36 +18,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const isInWishlist = false; // This should be replaced with actual wishlist check
 
     card.innerHTML = `
-        <div class="product-image">
-          <img src="${
-            product.image || "https://via.placeholder.com/200x150?text=Product"
-          }" alt="${product.name}">
-        </div>
-        <div class="product-info">
-          <div class="product-title">${product.name}</div>
-          <div class="product-price1">$${
-            product.discountedPrice
-              ? product.discountedPrice.toFixed(2)
-              : product.price.toFixed(2)
-          }</div>
-          ${
-            product.discountedPrice
-              ? `<div class="product-price2">$${product.price.toFixed(2)}</div>`
-              : ""
-          }
-          <div class="product-merchant">${
-            product.merchants
-              ? product.merchants.join(", ")
-              : "Multiple merchants"
-          }</div>
-          <div class="product-actions">
-            <a href="#" class="view-deal">View Deal</a>
-            <button class="wishlist-btn ${
-              isInWishlist ? "active" : ""
-            }" data-id="${product.id}">♡</button>
-          </div>
-        </div>
-      `;
+    <div class="product-image">
+      <img src="${
+        product.image || "https://via.placeholder.com/200x150?text=Product"
+      }" alt="${product.name}">
+    </div>
+    <div class="product-info">
+      <div class="product-title">${product.name}</div>
+      <div class="product-price1">$${product.price.toFixed(2)}</div>
+      <div class="product-merchant">${
+        product.merchants ? product.merchants.join(", ") : "Multiple merchants"
+      }</div>
+      <div class="product-actions">
+        <a href="#" class="view-deal">View Deal</a>
+        <button class="wishlist-btn ${isInWishlist ? "active" : ""}" data-id="${
+      product.id
+    }">♡</button>
+      </div>
+    </div>
+    `;
 
     // Add click event for view deal button
     card.querySelector(".view-deal").addEventListener("click", function (e) {
@@ -245,7 +234,6 @@ document.addEventListener("DOMContentLoaded", function () {
         id: 1,
         name: "Premium Smartphone 128GB - Black",
         price: 599.99,
-        discountedPrice: 459.99,
         image: "https://via.placeholder.com/200x150?text=Smartphone",
         merchants: ["Amazon", "Best Buy", "Walmart"],
         category: "electronics",
@@ -257,7 +245,6 @@ document.addEventListener("DOMContentLoaded", function () {
         id: 2,
         name: "Wireless Noise-Cancelling Headphones",
         price: 199.99,
-        discountedPrice: 149.99,
         image: "https://via.placeholder.com/200x150?text=Headphones",
         merchants: ["Best Buy", "Target"],
         category: "electronics",
@@ -269,7 +256,6 @@ document.addEventListener("DOMContentLoaded", function () {
         id: 3,
         name: "Fitness Smartwatch with Heart Rate Monitor",
         price: 129.99,
-        discountedPrice: 99.99,
         image: "https://via.placeholder.com/200x150?text=Smartwatch",
         merchants: ["Amazon", "Walmart"],
         category: "electronics",
@@ -281,7 +267,6 @@ document.addEventListener("DOMContentLoaded", function () {
         id: 4,
         name: "10-inch Tablet 64GB - Space Gray",
         price: 329.99,
-        discountedPrice: 239.99,
         image: "https://via.placeholder.com/200x150?text=Tablet",
         merchants: ["Best Buy", "Target"],
         category: "electronics",
@@ -293,7 +278,6 @@ document.addEventListener("DOMContentLoaded", function () {
         id: 5,
         name: "Portable Bluetooth Speaker - Waterproof",
         price: 79.99,
-        discountedPrice: 49.99,
         image: "https://via.placeholder.com/200x150?text=Speaker",
         merchants: ["Amazon", "Walmart"],
         category: "electronics",
@@ -305,7 +289,6 @@ document.addEventListener("DOMContentLoaded", function () {
         id: 6,
         name: "27-inch 4K Monitor - IPS Panel",
         price: 349.99,
-        discountedPrice: 249.99,
         image: "https://via.placeholder.com/200x150?text=Monitor",
         merchants: ["Best Buy", "Amazon"],
         category: "electronics",

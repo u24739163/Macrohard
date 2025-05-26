@@ -184,14 +184,7 @@ body {
 .product-price1 {
     font-size: 1.2rem;
     font-weight: bold;
-    color: #557ff4;
-    margin-bottom: 8px;
-}
-
-.product-price2 {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #2a52be;
+    color: #2a52be;;
     margin-bottom: 8px;
 }
 

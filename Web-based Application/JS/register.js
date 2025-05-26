@@ -117,25 +117,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
       xhttp.onload = function () {
         document.getElementById("loading-screen").remove();
-
         if (xhttp.status >= 200 && xhttp.status < 300) {
           const response = JSON.parse(xhttp.responseText);
           try {
-            if (response.success === "Success") {
-              //document.getElementById("signupForm").replaceWith(message);
-              localStorage.setItem("apiKey", response.data.Apikey);
+            if (response.success === true) {
+              localStorage.setItem("apiKey", response.data.key);
               window.location.href = "homepage.html";
             } else {
               showNotification(
-                response.data.message || "Registration failed",
+                "Registration failed. Please try again",
                 "error"
               );
             }
           } catch (e) {
-            showNotification(
-              "An error occurred while processing your request",
-              "error"
-            );
+            showNotification("Registration failed. Please try again", "error");
           }
         } else {
           if (xhttp.status == 409) {
@@ -144,11 +139,6 @@ document.addEventListener("DOMContentLoaded", function () {
             showNotification("Registration failed. Please try again", "error");
           }
         }
-      };
-
-      xhttp.onerror = function () {
-        document.getElementById("loading-screen").remove();
-        showNotification("Network error occurred", "error");
       };
 
       xhttp.send(JSON.stringify(requestData));
