@@ -1,3 +1,4 @@
+const API_LINK = "https://wheatley.cs.up.ac.za/u24739163/api.php";
 document.addEventListener("DOMContentLoaded", function () {
   const productGrid = document.querySelector(".product-grid");
   const resultsCount = document.querySelector(".results-count");
@@ -13,29 +14,47 @@ document.addEventListener("DOMContentLoaded", function () {
   function createProductCard(product) {
     const card = document.createElement("div");
     card.className = "product-card";
-
     // Check if product is in wishlist (you would need to implement this check)
     const isInWishlist = false; // This should be replaced with actual wishlist check
+    // Generate star rating HTML
+    const rating = product.rating || 0;
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    let starsHTML = "";
+    // Full stars
+    starsHTML += "★".repeat(fullStars);
+    // Half star if needed
+    if (hasHalfStar) starsHTML += "☆";
+    // Empty stars
+    starsHTML += "☆".repeat(emptyStars);
 
     card.innerHTML = `
-    <div class="product-image">
-      <img src="${
-        product.image || "https://via.placeholder.com/200x150?text=Product"
-      }" alt="${product.name}">
-    </div>
-    <div class="product-info">
-      <div class="product-title">${product.name}</div>
-      <div class="product-price1">$${product.price.toFixed(2)}</div>
-      <div class="product-merchant">${
-        product.merchants ? product.merchants.join(", ") : "Multiple merchants"
-      }</div>
-      <div class="product-actions">
-        <a href="#" class="view-deal">View Deal</a>
-        <button class="wishlist-btn ${isInWishlist ? "active" : ""}" data-id="${
-      product.id
-    }">♡</button>
-      </div>
-    </div>
+        <div class="product-image">
+          <img src="${
+            product.image || "https://via.placeholder.com/200x150?text=Product"
+          }" alt="${product.name}">
+        </div>
+        <div class="product-info">
+          <div class="product-title">${product.name}</div>
+          <div class="product-price1">$${product.price.toFixed(2)}</div>
+          <div class="product-rating">
+            <div class="stars">${starsHTML}</div>
+            <div class="rating-count">(${product.reviewCount || 0})</div>
+          </div>
+          <div class="product-merchant">${
+            product.merchants
+              ? product.merchants.join(", ")
+              : "Multiple merchants"
+          }</div>
+          <div class="product-actions">
+            <a href="#" class="view-deal">View Deal</a>
+            <button class="wishlist-btn ${
+              isInWishlist ? "active" : ""
+            }" data-id="${product.id}">♡</button>
+          </div>
+        </div>
     `;
 
     // Add click event for view deal button
@@ -66,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(loadingDiv);
 
     const xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "https://wheatley.cs.up.ac.za/u24739163/api.php", true);
+    xhttp.open("POST", API_LINK, true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.setRequestHeader("Accept", "application/json");
 
@@ -121,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const isInWishlist = button.classList.contains("active");
 
     const xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "https://wheatley.cs.up.ac.za/u24739163/api.php", true);
+    xhttp.open("POST", API_LINK, true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.setRequestHeader("Accept", "application/json");
 
@@ -129,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (xhttp.status >= 200 && xhttp.status < 300) {
         try {
           const response = JSON.parse(xhttp.responseText);
-          if (response.status === "success") {
+          if (response.success === true) {
             // Toggle the active class based on the action
             if (isInWishlist) {
               button.classList.remove("active");
@@ -137,20 +156,21 @@ document.addEventListener("DOMContentLoaded", function () {
               button.classList.add("active");
             }
           } else {
-            console.error("Failed to update wishlist:", response.message);
+            showNotification("Please Login to add to Wishlist", "error");
           }
         } catch (e) {
-          console.error("Error parsing response:", e);
+          showNotification("Please Login to add to Wishlist", "error");
         }
       } else {
-        console.error("API request failed with status:", xhttp.status);
+        showNotification("Please Login to add to Wishlist", "error");
       }
     };
 
     const requestData = {
-      action: isInWishlist ? "remove_from_wishlist" : "add_to_wishlist",
-      product_id: productId,
-      // Add user_id if authenticated
+      type: "Wishlist",
+      apikey: localStorage.getItem("apiKey") || "",
+      ADDITION: isInWishlist ? "remove" : "add",
+      Product: productId,
     };
 
     xhttp.send(JSON.stringify(requestData));
@@ -239,6 +259,7 @@ document.addEventListener("DOMContentLoaded", function () {
         category: "electronics",
         brand: "apple",
         rating: 4.5,
+        reviewCount: 128,
         dateAdded: "2023-01-15",
       },
       {
@@ -250,6 +271,7 @@ document.addEventListener("DOMContentLoaded", function () {
         category: "electronics",
         brand: "sony",
         rating: 4.2,
+        reviewCount: 50,
         dateAdded: "2023-02-20",
       },
       {
@@ -261,6 +283,7 @@ document.addEventListener("DOMContentLoaded", function () {
         category: "electronics",
         brand: "samsung",
         rating: 4.0,
+        reviewCount: 2,
         dateAdded: "2023-03-10",
       },
       {
@@ -272,6 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
         category: "electronics",
         brand: "apple",
         rating: 4.3,
+        reviewCount: 11,
         dateAdded: "2023-01-25",
       },
       {
@@ -283,6 +307,7 @@ document.addEventListener("DOMContentLoaded", function () {
         category: "electronics",
         brand: "sony",
         rating: 3.9,
+        reviewCount: 28,
         dateAdded: "2023-04-05",
       },
       {
@@ -294,6 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
         category: "electronics",
         brand: "samsung",
         rating: 4.1,
+        reviewCount: 43,
         dateAdded: "2023-03-15",
       },
     ];
@@ -316,3 +342,39 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize the products display
   fetchProducts();
 });
+
+// Notification system
+function showNotification(message, type = "success") {
+  console.log("Loadinf notif");
+  if (!document.querySelector(".notification-container")) {
+    const container = document.createElement("div");
+    container.className = "notification-container";
+    document.body.appendChild(container);
+  }
+
+  const container = document.querySelector(".notification-container");
+  const notification = document.createElement("div");
+  notification.className = `notification ${type}`;
+
+  const messageSpan = document.createElement("span");
+  messageSpan.textContent = message;
+
+  const closeButton = document.createElement("button");
+  closeButton.className = "notification-close";
+  closeButton.innerHTML = "&times;";
+  closeButton.addEventListener("click", () => {
+    notification.classList.remove("show");
+    setTimeout(() => notification.remove(), 300);
+  });
+
+  notification.appendChild(messageSpan);
+  notification.appendChild(closeButton);
+  container.appendChild(notification);
+
+  setTimeout(() => notification.classList.add("show"), 10);
+
+  setTimeout(() => {
+    notification.classList.remove("show");
+    setTimeout(() => notification.remove(), 300);
+  }, 5000);
+}

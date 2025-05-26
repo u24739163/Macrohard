@@ -1,3 +1,4 @@
+const API_LINK = "https://wheatley.cs.up.ac.za/u24739163/api.php";
 document.addEventListener("DOMContentLoaded", function () {
   const registerForm = document.getElementById("register-form");
   const firstNameInput = document.getElementById("first-name");
@@ -107,11 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Simulate API call (replace with actual API call)
       const xhttp = new XMLHttpRequest();
-      xhttp.open(
-        "POST",
-        "https://wheatley.cs.up.ac.za/u24739163/api.php",
-        true
-      );
+      xhttp.open("POST", API_LINK, true);
       xhttp.setRequestHeader("Content-Type", "application/json");
       xhttp.setRequestHeader("Accept", "application/json");
 

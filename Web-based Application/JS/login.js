@@ -1,3 +1,4 @@
+const API_LINK = "https://wheatley.cs.up.ac.za/u24739163/api.php";
 document.addEventListener("DOMContentLoaded", function () {
   const loginForm = document.getElementById("login-form");
   const emailInput = document.getElementById("email");
@@ -76,11 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Simulate API call (replace with actual API call)
       const xhttp = new XMLHttpRequest();
-      xhttp.open(
-        "POST",
-        "https://wheatley.cs.up.ac.za/u24739163/api.php",
-        true
-      );
+      xhttp.open("POST", API_LINK, true);
       xhttp.setRequestHeader("Content-Type", "application/json");
       xhttp.setRequestHeader("Accept", "application/json");
 
@@ -91,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
           try {
             if (response.success === "Success") {
               //document.getElementById("signupForm").replaceWith(message);
-              localStorage.setItem("apiKey", response.data.key);
+              localStorage.setItem("apiKey", response.data.Apikey);
               window.location.href = "homepage.html";
             } else {
               showNotification("Username or password is incorrect", "error");
