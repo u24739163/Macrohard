@@ -562,27 +562,22 @@ function initializeReviewForm() {
   if (!reviewForm) return;
 
   // Initialize star rating interaction
-  const ratingInputs = reviewForm.querySelectorAll(
-    '.rating-input input[type="radio"]'
-  );
+  const ratingInputs = reviewForm.querySelectorAll('.rating-input input[type="radio"]');
   const ratingLabels = reviewForm.querySelectorAll(".rating-input label");
 
   ratingLabels.forEach((label, index) => {
     label.addEventListener("mouseover", () => {
       // Fill stars up to this one
       ratingLabels.forEach((l, i) => {
-        l.querySelector("i").className =
-          i <= index ? "fas fa-star" : "far fa-star";
+        l.querySelector("i").className = i <= index ? "fas fa-star" : "far fa-star";
       });
     });
 
     label.addEventListener("mouseout", () => {
       // Reset to selected rating
-      const selectedRating =
-        reviewForm.querySelector('input[name="rating"]:checked')?.value || 0;
+      const selectedRating = reviewForm.querySelector('input[name="rating"]:checked')?.value || 0;
       ratingLabels.forEach((l, i) => {
-        l.querySelector("i").className =
-          i < selectedRating ? "fas fa-star" : "far fa-star";
+        l.querySelector("i").className = i < selectedRating ? "fas fa-star" : "far fa-star";
       });
     });
   });
@@ -593,20 +588,14 @@ function initializeReviewForm() {
     const apiKey = sessionStorage.getItem("apiKey");
     if (!apiKey) {
       alert("Please login to submit a review");
-      window.location.href = "login.php?redirect=view.php?id=" + productId;
+      window.location.href = "login.html?redirect=view.html?id=" + productId;
       return;
     }
 
     // Get form data
-    const rating = parseFloat(
-      reviewForm.querySelector('input[name="rating"]:checked')?.value || 0
-    );
-    const comment = reviewForm
-      .querySelector('textarea[name="comment"]')
-      ?.value.trim();
-    const retailerId = parseInt(
-      reviewForm.querySelector('select[name="retailer"]')?.value || 0
-    );
+    const rating = parseFloat(reviewForm.querySelector('input[name="rating"]:checked')?.value || 0);
+    const comment = reviewForm.querySelector('textarea[name="comment"]')?.value.trim();
+    const retailerId = reviewForm.querySelector('select[name="retailer"]')?.value || null;
 
     // Validate form data
     if (!rating) {
@@ -615,10 +604,6 @@ function initializeReviewForm() {
     }
     if (!comment) {
       alert("Please enter your review");
-      return;
-    }
-    if (!retailerId) {
-      alert("Please select a retailer");
       return;
     }
 
@@ -634,21 +619,19 @@ function initializeReviewForm() {
           Product: productId,
           Rating: rating,
           Comment: comment,
-          retailer: retailerId,
+          retailer: retailerId || null
         }),
       });
 
       const data = await response.json();
 
-      if (data.success === "success") {
+      if (data.success === "Success") {
         // Show success message
         showNotification("Review submitted successfully!");
 
         // Reset form
         reviewForm.reset();
-        ratingLabels.forEach(
-          (l) => (l.querySelector("i").className = "far fa-star")
-        );
+        ratingLabels.forEach(l => l.querySelector("i").className = "far fa-star");
 
         // Reload product details to show new review
         loadProductDetails();
