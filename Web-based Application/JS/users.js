@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Check if admin is logged in
 function checkAdminSession() {
-    return fetch('../PHP/adminAPI.php?action=check_session')
+    return fetch('../API/adminAPI.php?action=check_session')
         .then(response => response.json())
         .then(data => {
             if (!data.logged_in) {
@@ -64,7 +64,7 @@ function loadUsers(page, search = '') {
     currentUserPage = page;
     currentUserSearch = search;
     
-    let url = `../PHP/adminAPI.php?action=get_users&page=${page}`;
+    let url = `../API/adminAPI.php?action=get_users&page=${page}`;
     if (search) {
         url += `&search=${encodeURIComponent(search)}`;
     }
@@ -170,7 +170,7 @@ function showAddUserModal() {
 
 // Show edit user modal
 function editUser(userId) {
-    fetch(`../PHP/adminAPI.php?action=get_user&id=${userId}`)
+    fetch(`../API/adminAPI.php?action=get_user&id=${userId}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -235,7 +235,7 @@ function handleUserFormSubmit(e) {
     if (password) formData.append('password', password);
     
     // Send to server
-    fetch('../PHP/adminAPI.php', {
+    fetch('../API/adminAPI.php', {
         method: 'POST',
         body: formData
     })
@@ -265,7 +265,7 @@ function deleteUser(userId) {
     formData.append('action', 'delete_user');
     formData.append('id', userId);
     
-    fetch('../PHP/adminAPI.php', {
+    fetch('../API/adminAPI.php', {
         method: 'POST',
         body: formData
     })
