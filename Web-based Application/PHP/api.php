@@ -560,63 +560,71 @@ Register
     login
     */
 
-    function login($email,$password){
-
-        $email = trim($email);
-        $password = trim($password);
-        if (!preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',$email)) {
-            http_response_code(400);
-            $this->response("False","Invalid email format.");
-            return;
-        }
-
-        if (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{8,}$/", $password)) {
-            http_response_code(400);
-            $this->response("False","Incorrect password format");
-            return;
-        }
-
-        $stmt = $this->conn->prepare("SELECT `UserID`,`Salt`,`PasswordHash`,`Apikey`,`Type`,`ThemeID` FROM `User` WHERE Email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result=$stmt->get_result();
-        $salt=null;
-        $ComparisonPassword=null;
-        $APIKEY=null;
-        $type=NULL;
-        $row=$result->fetch_assoc();
-        if(!$row){
-            http_response_code(400);
-            $this->response("False","Invalid email format");
-            return;
-        }else{
-            $APIKEY=$row['Apikey'];
-            $ComparisonPassword=$row['PasswordHash'];
-            $salt=$row['Salt'];
-            $type=$row['Type'];
-        }
-        $hashedPassword=hash('sha512',$password.$salt);
-        //echo $hashedPassword;
-        //echo "|";
-        //echo $ComparisonPassword;
-        $stmt->close();
-        if($ComparisonPassword==$hashedPassword){
-            if($APIKEY===null){
-                $this->response("False","Invalid email format");
-                return;
-            }
-            $timestamp = time();
-            $data=["Apikey"=>$APIKEY,"Type"=>$type];
-            echo json_encode(["success" => "Success", "timestamp" => $timestamp, "data" =>$data]);
-            return;
-        }else{
-            http_response_code(400);
-            $this->response("False","Incorrect password");
-            return;
-        }
-        echo "Failed";
+    function login($email, $password) {
+    // Input validation
+    $email = trim($email);
+    $password = trim($password);
+    
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         http_response_code(400);
+        $this->response("False", "Invalid email format");
+        return;
+    }
 
+    // Get user data (including all needed fields)
+    $stmt = $this->conn->prepare("
+        SELECT UserID, FirstName, LastName, Email, PasswordHash, Salt, Apikey, Type, ThemeID 
+        FROM User 
+        WHERE Email = ?
+    ");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows === 0) {
+        http_response_code(401); // 401 for authentication failures
+        $this->response("False", "Invalid credentials");
+        return;
+    }
+
+    $user = $result->fetch_assoc();
+    
+    // Verify password
+    $hashedPassword = hash('sha512', $password . $user['Salt']);
+    if (!hash_equals($user['PasswordHash'], $hashedPassword)) {
+        http_response_code(401);
+        $this->response("False", "Invalid credentials");
+        return;
+    }
+
+    // Generate new API key on each login (security best practice)
+    $newApiKey = bin2hex(random_bytes(32));
+    
+    // Update database with new key
+    $updateStmt = $this->conn->prepare("UPDATE User SET Apikey = ? WHERE UserID = ?");
+    $updateStmt->bind_param("si", $newApiKey, $user['UserID']);
+    if (!$updateStmt->execute()) {
+        http_response_code(500);
+        $this->response("False", "Login failed");
+        return;
+    }
+
+    // Return all needed user data
+    $responseData = [
+        'success' => 'Success',
+        'data' => [
+            'Apikey' => $newApiKey,
+            'Type' => $user['Type'],
+            'UserID' => $user['UserID'],
+            'FirstName' => $user['FirstName'],
+            'LastName' => $user['LastName'],
+            'Email' => $user['Email'],
+            'ThemeID' => $user['ThemeID']
+        ]
+    ];
+
+    header('Content-Type: application/json');
+    echo json_encode($responseData);
     }
 
     /*

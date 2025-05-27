@@ -1,8 +1,41 @@
 <?php
 header('Content-Type: application/json');
+session_set_cookie_params(0);
 session_start();
 
 include 'Config.php';
+
+// Get API key from headers (frontend should send it)
+$apiKey = $_SERVER['HTTP_X_API_KEY'] ?? $_GET['api_key'] ?? null;
+
+// Check API key for all requests except login
+if (!isset($_GET['action']) || $_GET['action'] !== 'login') {
+    if (!$apiKey) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'message' => 'API key missing']);
+        exit;
+    }
+
+    // Validate API key against database
+    $stmt = $conn->prepare("SELECT UserID, Email, FirstName, LastName, Type FROM User WHERE Apikey = ?");
+    $stmt->bind_param("s", $apiKey);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows === 0) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'message' => 'Invalid API key']);
+        exit;
+    }
+
+    $user = $result->fetch_assoc();
+    if ($user['Type'] !== 'Admin') {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Admin access required']);
+        exit;
+    }
+}
+
 
 $conn->set_charset('utf8');
 
@@ -138,6 +171,8 @@ function handleLogin($conn, $data) {
             $_SESSION['admin_id'] = $user['UserID'];
             $_SESSION['admin_email'] = $user['Email'];
             $_SESSION['admin_name'] = $user['FirstName'] . ' ' . $user['LastName'];
+
+            error_log(print_r($_SESSION, true)); // Log session variables
             
             echo json_encode([
                 'success' => true, 
