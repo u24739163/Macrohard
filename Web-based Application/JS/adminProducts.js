@@ -25,7 +25,7 @@ let currentProductPage = 1;
 let totalProductPages = 1;
 
 function loadProducts(page = 1, search = '') {
-    let url = `../API/adminAPI.php?action=get_products&page=${page}`;
+    let url = `../PHP/adminAPI.php?action=get_products&page=${page}`;
     if (search) {
         url += `&search=${encodeURIComponent(search)}`;
     }

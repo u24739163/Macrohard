@@ -23,7 +23,7 @@ let currentStockistPage = 1;
 let totalStockistPages = 1;
 
 function loadStockists(page = 1, search = '') {
-    let url = `../API/adminAPI.php?action=get_stockists&page=${page}`;
+    let url = `../PHP/adminAPI.php?action=get_stockists&page=${page}`;
     if (search) {
         url += `&search=${encodeURIComponent(search)}`;
     }
@@ -79,7 +79,7 @@ function showStockistModal(stockistId = null) {
     if (stockistId) {
         // Edit mode
         title.textContent = 'Edit Stockist';
-        fetch(`../API/adminAPI.php?action=get_stockist&id=${stockistId}`)
+        fetch(`../PHP/adminAPI.php?action=get_stockist&id=${stockistId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
