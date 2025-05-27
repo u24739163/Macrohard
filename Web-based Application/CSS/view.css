@@ -339,18 +339,35 @@ header .container {
     margin-bottom: 10px;
 }
 
-.retailer-logo {
-    width: 120px;
-    height: 40px;
-    object-fit: contain;
+.retailer-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: white;
-    padding: 5px;
-    border-radius: 4px;
+    border-radius: 6px;
+    padding: 10px;
+    height: 100%;
     border: 1px solid #eee;
 }
 
+.retailer-logo {
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    max-height: 60px;
+    object-fit: contain;
+}
+
+.retailer-info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    height: 100%;
+}
+
 .retailer-price {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .retailer-price .price {
@@ -358,7 +375,6 @@ header .container {
     font-size: 20px;
     font-weight: 700;
     color: #2a52be;
-    margin-bottom: 2px;
 }
 
 .retailer-price .shipping {
@@ -400,6 +416,22 @@ header .container {
 
 .view-deal-btn {
     flex: 1;
+    background-color: #2a52be;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    width: 100%;
+}
+
+.view-deal-btn:hover {
+    background-color: #1e3d8f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 /* Full-width button style for retailer cards */
@@ -590,6 +622,88 @@ header .container {
     background-color: #1e3d8f;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Updated retailer card grid layout */
+.retailer-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Logo container styling */
+.retailer-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border-radius: 6px;
+    padding: 10px;
+    height: 100%;
+    border: 1px solid #eee;
+}
+
+.retailer-logo {
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    max-height: 60px;
+    object-fit: contain;
+}
+
+/* Info container styling */
+.retailer-info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    height: 100%;
+}
+
+.retailer-price {
+    margin-bottom: 5px;
+}
+
+.retailer-price .price {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    color: #2a52be;
+}
+
+/* Button styling */
+.view-deal-btn {
+    background-color: #2a52be;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    width: 100%;
+}
+
+.view-deal-btn:hover {
+    background-color: #1e3d8f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Best deal styling */
+.retailer-card.best-deal .retailer-logo-container {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+}
+
+/* Remove redundant styles */
+.retailer-header,
+.retailer-actions,
+.retailer-btn,
+.full-width-btn {
+    display: none;
 }
 
 /* Responsive Design */

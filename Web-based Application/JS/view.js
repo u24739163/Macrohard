@@ -204,16 +204,18 @@ function createRetailerCard(priceData, isBestDeal) {
 
   card.innerHTML = `
         ${isBestDeal ? '<div class="best-deal-badge">Best Deal</div>' : ""}
-        <div class="retailer-header">
-            <img src="${priceData.logo_url || "placeholder-logo.png"}" alt="${
+        <div class="retailer-card-grid">
+            <div class="retailer-logo-container">
+                <img src="${priceData.logo_url || "placeholder-logo.png"}" alt="${
     priceData.retailer_name
   }" class="retailer-logo">
-        </div>
-        <div class="retailer-price">
-            <span class="price">R${priceData.price.toFixed(2)}</span>
-        </div>
-        <div class="retailer-actions">
-            <button class="btn primary-btn retailer-btn view-deal-btn">View Deal</button>
+            </div>
+            <div class="retailer-info-container">
+                <div class="retailer-price">
+                    <span class="price">R${priceData.price.toFixed(2)}</span>
+                </div>
+                <button class="btn primary-btn view-deal-btn">View Deal</button>
+            </div>
         </div>
     `;
 
