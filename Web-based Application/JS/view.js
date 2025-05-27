@@ -587,6 +587,8 @@ function initializeReviewForm() {
     e.preventDefault();
 
     const apiKey = localStorage.getItem("apiKey");
+    console.log("API Key present:", !!apiKey); // Log if API key exists
+
     if (!apiKey) {
       alert("Please login to submit a review");
       window.location.href = "login.html?redirect=view.html?id=" + productId;
@@ -598,6 +600,13 @@ function initializeReviewForm() {
     const comment = reviewForm.querySelector('textarea[name="comment"]')?.value.trim();
     const retailerId = reviewForm.querySelector('select[name="retailer"]')?.value || null;
 
+    console.log("Form data:", {
+      rating,
+      comment,
+      retailerId,
+      productId
+    });
+
     // Validate form data
     if (!rating) {
       alert("Please select a rating");
@@ -608,42 +617,42 @@ function initializeReviewForm() {
       return;
     }
 
+    const requestData = {
+      type: "AddReview",
+      apikey: apiKey,
+      Product: productId,
+      Rating: rating,
+      Comment: comment,
+      retailer: retailerId === "" ? null : retailerId
+    };
+
+    console.log("Sending request:", requestData);
+
     try {
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          type: "AddReview",
-          apikey: apiKey,
-          Product: productId,
-          Rating: rating,
-          Comment: comment,
-          retailer: retailerId === "" ? null : retailerId
-        }),
+        body: JSON.stringify(requestData),
       });
 
+      console.log("Response status:", response.status);
       const data = await response.json();
-      console.log("Review submission response:", data);
+      console.log("Response data:", data);
 
       if (data.success === "Success" || data.success === "true") {
-        // Show success message
         showNotification("Review submitted successfully!");
-
-        // Reset form
         reviewForm.reset();
         ratingLabels.forEach(l => l.querySelector("i").className = "far fa-star");
-
-        // Reload product details to show new review
         loadProductDetails();
       } else {
-        console.error("Review submission failed:", data);
-        alert("Error: " + (data.data || "Failed to submit review"));
+        console.error("Review submission failed. Response:", data);
+        alert("Error: " + (data.data || "Failed to submit review. Please try again."));
       }
     } catch (error) {
       console.error("Error submitting review:", error);
-      alert("Error connecting to server");
+      alert("Error connecting to server. Please try again.");
     }
   });
 }
