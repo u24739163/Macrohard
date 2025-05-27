@@ -585,7 +585,7 @@ function initializeReviewForm() {
   reviewForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const apiKey = localStorageStorage.getItem("apiKey");
+    const apiKey = localStorage.getItem("apiKey");
     if (!apiKey) {
       alert("Please login to submit a review");
       window.location.href = "login.html?redirect=view.html?id=" + productId;
