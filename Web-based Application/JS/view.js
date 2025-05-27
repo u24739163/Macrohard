@@ -213,9 +213,7 @@ function createRetailerCard(priceData, isBestDeal) {
             <span class="price">R${priceData.price.toFixed(2)}</span>
         </div>
         <div class="retailer-actions">
-            <a href="${
-              priceData.product_url
-            }" class="btn primary-btn retailer-btn" target="_blank">View Deal</a>
+            <button class="btn primary-btn retailer-btn view-deal-btn">View Deal</button>
             <button class="btn-icon wishlist-retailer" data-retailer-id="${
               priceData.retailer_id
             }" title="Add to Wishlist">
@@ -223,6 +221,12 @@ function createRetailerCard(priceData, isBestDeal) {
             </button>
         </div>
     `;
+
+  // Add click event to the View Deal button
+  const viewDealBtn = card.querySelector('.view-deal-btn');
+  viewDealBtn.addEventListener('click', () => {
+    window.open(priceData.product_url, '_blank');
+  });
 
   return card;
 }

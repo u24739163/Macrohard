@@ -389,31 +389,36 @@ header .container {
 
 .retailer-actions {
     display: flex;
-    gap: 8px;
     align-items: center;
+    margin-top: 10px;
 }
 
 .retailer-btn {
-    flex: 1;
-    padding: 8px 12px;
-    font-size: 14px;
+    display: inline-block;
+    min-width: 120px;
     text-align: center;
-    text-decoration: none;
+    margin-right: 10px;
+}
+
+.view-deal-btn {
+    flex: 1;
 }
 
 .btn-icon {
-    background: none;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
     border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 8px;
+    background: white;
     cursor: pointer;
-    color: #666;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
 .btn-icon:hover {
-    color: #2a52be;
-    border-color: #2a52be;
+    background-color: #f5f5f5;
 }
 
 .wishlist-retailer.active {
@@ -561,6 +566,25 @@ header .container {
     margin-right: 10px;
     min-width: 120px;
     color: #555;
+}
+
+/* Improved button styles */
+.primary-btn {
+    background-color: #2a52be;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.primary-btn:hover {
+    background-color: #1e3d8f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 /* Responsive Design */
