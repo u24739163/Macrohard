@@ -1,12 +1,133 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Meet the Team</title>
+  <link rel="stylesheet" href="../CSS/products.css">
+  <style>
+    .team {
+      background-color: white;
+      margin: 40px auto;
+      padding: 40px 5%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      max-width: 1000px;
+    }
+
+    .team-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .team-header h1 {
+      font-size: 2rem;
+      color: #2a52be;
+      margin-bottom: 8px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+    }
+
+    .teammate {
+      background-color: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .teammate:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .name {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .studentNum {
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    .initials {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #2a52be;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    .teammate-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  </style>
+</head>
 <body>
-    <h1>Meet the Team:</h1>
-    <ul>
-        <li>Michael</li>
-        <li>Mulondi</li>
-        <li>Arran</li>
-        <li>Tshepiso</li>
-        <li>Keegan</li>
-        <li>Vele</li>
-    </ul>
+  <div class="team">
+    <div class="team-header">
+      <h1>Meet the Team</h1>
+      <p class="subtext">The gents behind the mess.</p>
+    </div>
+    <div class="grid">
+      <div class="grid">
+        <div class="teammate-inner">
+          <div class="initials">MN</div>
+          <div class="name">Michael Neto</div>
+          <div class="studentNum">u24641342</div>
+        </div>
+      </div>
+      <div class="teammate">
+        <div class="teammate-inner">
+          <div class="initials">MM</div>
+          <div class="name">Mulondi Makhado</div>
+          <div class="studentNum">u24739163</div>
+        </div>
+      </div>
+      <div class="teammate">
+        <div class="teammate-inner">
+          <div class="initials">AL</div>
+          <div class="name">Arran Lamond</div>
+          <div class="studentNum">u23655675</div>
+        </div>
+      </div>
+      <div class="teammate">
+        <div class="teammate-inner">
+          <div class="initials">TM</div>
+          <div class="name">Tshepiso Makelana</div>
+          <div class="studentNum">u23588579</div>
+        </div>
+      </div>
+      <div class="teammate">
+        <div class="teammate-inner">
+          <div class="initials">KL</div>
+          <div class="name">Keegan Lewis</div>
+          <div class="studentNum">u24594522</div>
+        </div>
+      </div>
+      <div class="teammate">
+        <div class="teammate-inner">
+          <div class="initials">VN</div>
+          <div class="name">Vele Ndamulelo</div>
+          <div class="studentNum">u23554607</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
+</html>
