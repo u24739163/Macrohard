@@ -1,4 +1,4 @@
-const API_LINK = "../API/Requested.php";
+const API_LINK = "../PHP/api.php";
 document.addEventListener("DOMContentLoaded", function () {
   const loginForm = document.getElementById("login-form");
   const emailInput = document.getElementById("email");
@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
         type: "Login",
       };
 
-      // Simulate API call (replace with actual API call)
       const xhttp = new XMLHttpRequest();
       xhttp.open("POST", API_LINK, true);
       xhttp.setRequestHeader("Content-Type", "application/json");
@@ -87,7 +86,6 @@ document.addEventListener("DOMContentLoaded", function () {
           const response = JSON.parse(xhttp.responseText);
           try {
             if (response.success === "Success") {
-              //document.getElementById("signupForm").replaceWith(message);
               if(response.data.Type === "Admin") {
                 localStorage.setItem("apiKey", response.data.Apikey);
                 window.location.href = "userManagement.html";
