@@ -1,4 +1,4 @@
-const API_LINK = "../PHP/api.php";
+const API_LINK = "../API/Requested.php";
 document.addEventListener("DOMContentLoaded", function () {
   const loginForm = document.getElementById("login-form");
   const emailInput = document.getElementById("email");
@@ -88,13 +88,16 @@ document.addEventListener("DOMContentLoaded", function () {
           try {
             if (response.success === "Success") {
               //document.getElementById("signupForm").replaceWith(message);
-              if (response.data.Type === "Admin") {
+              if(response.data.Type === "Admin") {
                 localStorage.setItem("apiKey", response.data.Apikey);
-                window.location.href = "adminDash.html";
-              } else {
+                window.location.href = "userManagement.html";
+              }
+              else
+              {
                 localStorage.setItem("apiKey", response.data.Apikey);
                 window.location.href = "homepage.html";
               }
+
             } else {
               showNotification("Username or password is incorrect", "error");
             }
