@@ -1,13 +1,13 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the page
-    initUserManagement();
-});
-
 // Global variables for pagination and state
 let currentPage = 1;
 let totalPages = 1;
 let currentSearch = '';
 let isProcessing = false;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the page
+    initUserManagement();
+});
 
 // Initialize user management page
 function initUserManagement() {
@@ -27,20 +27,20 @@ function initUserManagement() {
 }
 
 // Check if admin is logged in
-function checkAdminSession() {
-    return fetch('../PHP/adminAPI.php?action=check_session')
-        .then(handleResponse)
-        .then(data => {
-            if (!data.logged_in) {
-                throw new Error('Not logged in');
-            }
-            // Set admin name if available
-            if (data.name) {
-                document.getElementById('admin-name').textContent = data.name;
-            }
-            return data;
-        });
-}
+// function checkAdminSession() {
+//     return fetch('../PHP/adminAPI.php?action=check_session')
+//         .then(handleResponse)
+//         .then(data => {
+//             if (!data.logged_in) {
+//                 throw new Error('Not logged in');
+//             }
+//             // Set admin name if available
+//             if (data.name) {
+//                 document.getElementById('admin-name').textContent = data.name;
+//             }
+//             return data;
+//         });
+// }
 
 // Set up all event listeners
 function setupEventListeners() {
