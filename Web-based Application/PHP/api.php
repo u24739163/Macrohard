@@ -98,14 +98,7 @@ Register
         $stmt = $this->conn->prepare("INSERT INTO `User` (FirstName, LastName, Email, PasswordHash,Salt,DateJoined ,Apikey,`Type`,ThemeID) VALUES (?, ?, ?,?, ?, NOW(),?, ?,1)");
         $stmt->bind_param("sssssss", $name, $surname, $email, $hashedPassword,$salt,$apiKey,$user_type);
         $stmt->execute();
-        if($user_type=="Admin"){
-            $UserID = $this->conn->insert_id;
-            $stmt = $this->conn->prepare("INSERT INTO `Admin`(`User_ID`, `Privileg_ID`) VALUES (?,4)");
-            $stmt->bind_param("i", $UserID);
-            $stmt->execute();
-        }
         $stmt->close();
-        
         return $apiKey;
     }
 
@@ -668,14 +661,14 @@ Register
         $retailers = [];
         while ($retailerRow = $retailerResult->fetch_assoc()) {
             $RetailerID=$retailerRow['RID'];
-            $stmt=$this->conn->prepare("SELECT ROUND(AVG(`Rating`), 1) AS Star
+            $stmt=$this->conn->prepare("SELECT ROUND(AVG(`Rating`), 1) AS Stars
                 FROM Review
                 WHERE `Retailer_ID` = ? AND `Product_ID` = ?");
             $stmt->bind_param("ii",$RetailerID,$id);
             $stmt->execute();
             $avgResult=$stmt->get_result();
             $rating=$avgResult->fetch_assoc();
-            $retailerRow['Rating']=$rating['Star'];
+            $retailerRow['Rating']=$rating['Stars'];
             $retailers[] = $retailerRow;
         }
 
