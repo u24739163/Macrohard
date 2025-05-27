@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompareIt - User Management</title>
+    <link rel="stylesheet" href="../CSS/admin.css">
+</head>
+<body>
+    <header class="admin-header">
+        <h1>CompareIt Admin Panel</h1>
+        <nav class="admin-nav">
+            <a href="adminDash.html">Dashboard</a>
+            <a href="userManagement.html" class="active">User Management</a>
+            <a href="adminProducts.html">Product Management</a>
+            <a href="adminStockists.html">Stockist Management</a>
+            <a href="../logout.php" class="logout">Logout</a>
+        </nav>
+        <div class="admin-info">
+            <span>Welcome, <span id="admin-name">Admin</span></span>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <h2>User Management</h2>
+        
+        <div class="management-controls">
+            <button id="add-user-btn" class="btn-primary">Add New User</button>
+            <div class="search-box">
+                <input type="text" id="user-search" placeholder="Search users...">
+                <button id="search-user-btn" class="btn-secondary">Search</button>
+            </div>
+        </div>
+
+        <table id="users-table" class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Type</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="pagination">
+            <button id="prev-user-page" class="btn-secondary">Previous</button>
+            <span id="user-page-info">Page 1 of 1</span>
+            <button id="next-user-page" class="btn-secondary">Next</button>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="user-modal-title">Add New User</h3>
+            <form id="user-form">
+                <input type="hidden" id="user-id">
+                <div class="form-group">
+                    <label for="first-name">First Name:</label>
+                    <input type="text" id="first-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="last-name">Last Name:</label>
+                    <input type="text" id="last-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">Type:</label>
+                    <select id="type" required>
+                        <option value="Customer">Customer</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password">
+                    <small>Leave blank to keep current password</small>
+                </div>
+                <button type="submit" class="btn-primary">Save User</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../JS/users.js"></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompareIt - Stockist Management</title>
+    <link rel="stylesheet" href="../CSS/admin.css">
+</head>
+<body>
+    <header class="admin-header">
+        <h1>CompareIt Admin Panel</h1>
+        <nav class="admin-nav">
+            <a href="adminDash.html">Dashboard</a>
+            <a href="userManagement.html">User Management</a>
+            <a href="adminProducts.html">Product Management</a>
+            <a href="adminStockists.html" class="active">Stockist Management</a>
+            <a href="../logout.php" class="logout">Logout</a>
+        </nav>
+        <div class="admin-info">
+            <span>Welcome, <span id="admin-name">Admin</span></span>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <h2>Stockist Management</h2>
+        
+        <div class="management-controls">
+            <button id="add-stockist-btn" class="btn-primary">Add New Stockist</button>
+            <div class="search-box">
+                <input type="text" id="stockist-search" placeholder="Search stockists...">
+                <button id="search-stockist-btn" class="btn-secondary">Search</button>
+            </div>
+        </div>
+
+        <table id="stockists-table" class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Website</th>
+                    <th>Logo</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="pagination">
+            <button id="prev-stockist-page" class="btn-secondary">Previous</button>
+            <span id="stockist-page-info">Page 1 of 1</span>
+            <button id="next-stockist-page" class="btn-secondary">Next</button>
+        </div>
+    </div>
+
+    <!-- Stockist Modal -->
+    <div id="stockist-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="stockist-modal-title">Add New Stockist</h3>
+            <form id="stockist-form">
+                <input type="hidden" id="stockist-id">
+                <div class="form-group">
+                    <label for="stockist-name">Name:</label>
+                    <input type="text" id="stockist-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="stockist-website">Website:</label>
+                    <input type="url" id="stockist-website" required>
+                </div>
+                <div class="form-group">
+                    <label for="stockist-logo">Logo URL:</label>
+                    <input type="url" id="stockist-logo">
+                </div>
+                <button type="submit" class="btn-primary">Save Stockist</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../JS/adminStockists.js"></script>
+</body>
+</html>
