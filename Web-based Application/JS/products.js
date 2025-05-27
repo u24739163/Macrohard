@@ -8,11 +8,33 @@ document.addEventListener("DOMContentLoaded", function () {
   const sortOptions = document.querySelector(".sort-options select");
   const searchInput = document.querySelector(".search-bar input");
   const searchButton = document.querySelector(".search-bar button");
+  if (localStorage.getItem("apiKey") !== null) {
+    updateAuthButton();
+    fetchWishlist();
+  }
+  function updateAuthButton() {
+    const loginLink = document.getElementById("login-link");
+    const apiKey = localStorage.getItem("apiKey");
 
+    if (apiKey) {
+      loginLink.textContent = "Logout";
+      loginLink.href = "#";
+      loginLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        localStorage.removeItem("apiKey");
+        window.location.href = "homepage.html";
+      });
+    } else {
+      loginLink.textContent = "Login";
+      loginLink.href = "login.html";
+      loginLink.replaceWith(loginLink.cloneNode(true));
+    }
+  }
   let products = [];
   let filteredProducts = [];
   let brands = [];
   let categories = [];
+  let wishlistProducts = [];
 
   // Function to fetch brands from API
   function fetchBrands() {
@@ -71,6 +93,47 @@ document.addEventListener("DOMContentLoaded", function () {
     xhttp.send(JSON.stringify(requestData));
   }
 
+  function fetchWishlist() {
+    const apiKey = localStorage.getItem("apiKey");
+    if (!apiKey) return; // Skip if user not logged in
+
+    const xhttp = new XMLHttpRequest();
+    xhttp.open("POST", API_LINK, true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.setRequestHeader("Accept", "application/json");
+
+    xhttp.onload = function () {
+      if (xhttp.status >= 200 && xhttp.status < 300) {
+        try {
+          const response = JSON.parse(xhttp.responseText);
+          if (response.success === true) {
+            wishlistProducts = response.data.Products || [];
+            // Update the wishlist status for any existing products
+            updateWishlistStatus();
+          }
+        } catch (e) {
+          console.error("Error parsing wishlist response:", e);
+        }
+      }
+    };
+
+    const requestData = {
+      type: "Wishlist",
+      apikey: apiKey,
+    };
+
+    xhttp.send(JSON.stringify(requestData));
+  }
+
+  function updateWishlistStatus() {
+    document.querySelectorAll(".wishlist-btn").forEach((button) => {
+      const productId = parseInt(button.dataset.id);
+      const isInWishlist = wishlistProducts.some(
+        (p) => p.ProductID === productId
+      );
+      button.classList.toggle("active", isInWishlist);
+    });
+  }
   // Function to populate brand filter dropdown
   function populateBrandFilter() {
     brandFilter.innerHTML = '<option value="">All Brands</option>';
@@ -97,8 +160,11 @@ document.addEventListener("DOMContentLoaded", function () {
   function createProductCard(product) {
     const card = document.createElement("div");
     card.className = "product-card";
-    // Check if product is in wishlist (you would need to implement this check)
-    const isInWishlist = false; // This should be replaced with actual wishlist check
+
+    const isInWishlist = wishlistProducts.some(
+      (p) => p.ProductID === product.ID
+    );
+
     // Generate star rating HTML
     const rating = product.Stars || 0;
     const fullStars = Math.floor(rating);
@@ -106,11 +172,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
     let starsHTML = "";
-    // Full stars
     starsHTML += "★".repeat(fullStars);
-    // Half star if needed
     if (hasHalfStar) starsHTML += "☆";
-    // Empty stars
     starsHTML += "☆".repeat(emptyStars);
 
     card.innerHTML = `
@@ -255,6 +318,7 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         showNotification("Please Login to add to Wishlist", "error");
       }
+      fetchWishlist();
     };
 
     const requestData = {
@@ -319,7 +383,6 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         break;
       default:
-        // Default/Best Match sorting (could be relevance or default order)
         break;
     }
   }
@@ -340,99 +403,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Fallback function to show default products if API fails
   function showDefaultProducts() {
-    const defaultProducts = [
-      {
-        ID: 1,
-        Name: "Premium Smartphone 128GB - Black",
-        Price: 599.99,
-        Image: {
-          ImageURL: "https://via.placeholder.com/200x150?text=Smartphone",
-          Caption: "Smartphone",
-        },
-        Retailers: ["Amazon", "Best Buy", "Walmart"],
-        CategoryID: "5",
-        BrandID: "1",
-        Stars: 4.5,
-        NumReviews: 128,
-        DateAdded: "2023-01-15",
-      },
-      {
-        ID: 2,
-        Name: "Wireless Noise-Cancelling Headphones",
-        Price: 199.99,
-        Image: {
-          ImageURL: "https://via.placeholder.com/200x150?text=Headphones",
-          Caption: "Headphones",
-        },
-        Retailers: ["Best Buy", "Target"],
-        CategoryID: "9",
-        BrandID: "4",
-        Stars: 4.2,
-        NumReviews: 50,
-        DateAdded: "2023-02-20",
-      },
-      {
-        ID: 3,
-        Name: "Fitness Smartwatch with Heart Rate Monitor",
-        Price: 129.99,
-        Image: {
-          ImageURL: "https://via.placeholder.com/200x150?text=Smartwatch",
-          Caption: "Smartwatch",
-        },
-        Retailers: ["Amazon", "Walmart"],
-        CategoryID: "5",
-        BrandID: "2",
-        Stars: 4.0,
-        NumReviews: 2,
-        DateAdded: "2023-03-10",
-      },
-      {
-        ID: 4,
-        Name: "10-inch Tablet 64GB - Space Gray",
-        Price: 329.99,
-        Image: {
-          ImageURL: "https://via.placeholder.com/200x150?text=Tablet",
-          Caption: "Tablet",
-        },
-        Retailers: ["Best Buy", "Target"],
-        CategoryID: "5",
-        BrandID: "1",
-        Stars: 4.3,
-        NumReviews: 11,
-        DateAdded: "2023-01-25",
-      },
-      {
-        ID: 5,
-        Name: "Portable Bluetooth Speaker - Waterproof",
-        Price: 79.99,
-        Image: {
-          ImageURL: "https://via.placeholder.com/200x150?text=Speaker",
-          Caption: "Speaker",
-        },
-        Retailers: ["Amazon", "Walmart"],
-        CategoryID: "9",
-        BrandID: "4",
-        Stars: 3.9,
-        NumReviews: 28,
-        DateAdded: "2023-04-05",
-      },
-      {
-        ID: 6,
-        Name: "27-inch 4K Monitor - IPS Panel",
-        Price: 349.99,
-        Image: {
-          ImageURL: "https://via.placeholder.com/200x150?text=Monitor",
-          Caption: "Monitor",
-        },
-        Retailers: ["Best Buy", "Amazon"],
-        CategoryID: "16",
-        BrandID: "2",
-        Stars: 4.1,
-        NumReviews: 43,
-        DateAdded: "2023-03-15",
-      },
-    ];
-
     products = defaultProducts;
     filteredProducts = [...products];
     renderProducts();

@@ -1,7 +1,29 @@
 const API_LINK = "../PHP/api.php";
 document.addEventListener("DOMContentLoaded", function () {
   const productsGrid = document.querySelector(".products-grid");
+  if (localStorage.getItem("apiKey") !== null) {
+    updateAuthButton();
+    fetchWishlist();
+  }
 
+  function updateAuthButton() {
+    const loginLink = document.getElementById("login-link");
+    const apiKey = localStorage.getItem("apiKey");
+
+    if (apiKey) {
+      loginLink.textContent = "Logout";
+      loginLink.href = "#";
+      loginLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        localStorage.removeItem("apiKey");
+        window.location.href = "homepage.html";
+      });
+    } else {
+      loginLink.textContent = "Login";
+      loginLink.href = "login.html";
+      loginLink.replaceWith(loginLink.cloneNode(true));
+    }
+  }
   // Function to create a product card element
   function createProductCard(product) {
     const card = document.createElement("div");
@@ -9,15 +31,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     card.innerHTML = `
             <img src="${
-              product.image ||
-              "https://via.placeholder.com/200x150?text=Product"
+              product.image
             }" alt="${product.name}">
             <h3>${product.name}</h3>
             <div class="price">$${product.price.toFixed(2)}</div>
             <div class="merchant">${product.merchants.join(", ")}</div>
         `;
 
-    // Make the entire card clickable (optional)
     card.addEventListener("click", function () {
       window.location.href = `products.html?product=${encodeURIComponent(
         product.name
@@ -47,10 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const response = JSON.parse(xhttp.responseText);
 
           if (response.status === "success") {
-            // Clear existing products
             productsGrid.innerHTML = "";
-
-            // Add new product cards (limit to 5)
             const productsToShow = response.data.products.slice(0, 5);
             productsToShow.forEach((product) => {
               const card = createProductCard(product);
@@ -58,129 +75,24 @@ document.addEventListener("DOMContentLoaded", function () {
             });
           } else {
             console.error("Failed to fetch products:", response.message);
-            showDefaultProducts();
           }
         } catch (e) {
           console.error("Error parsing response:", e);
-          showDefaultProducts();
         }
       } else {
         console.error("API request failed with status:", xhttp.status);
-        showDefaultProducts();
       }
     };
 
     xhttp.onerror = function () {
       document.getElementById("loading-screen").remove();
       console.error("Network error occurred");
-      showDefaultProducts();
     };
 
     xhttp.send();
   }
 
-  // Fallback function to show default products if API fails
-  function showDefaultProducts() {
-    const defaultProducts = [
-      {
-        name: "Wireless Bluetooth Headphones",
-        price: 59.99,
-        image: "https://via.placeholder.com/200x150?text=Product+1",
-        merchants: ["Amazon", "Best Buy", "Walmart"],
-      },
-      {
-        name: "Smartphone XYZ Model",
-        price: 499.99,
-        image: "https://via.placeholder.com/200x150?text=Product+2",
-        merchants: ["Amazon", "Target"],
-      },
-      {
-        name: "4K Ultra HD Smart TV",
-        price: 349.99,
-        image: "https://via.placeholder.com/200x150?text=Product+3",
-        merchants: ["Best Buy", "Walmart"],
-      },
-      {
-        name: "Wireless Charging Pad",
-        price: 19.99,
-        image: "https://via.placeholder.com/200x150?text=Product+4",
-        merchants: ["Amazon", "Target", "Walmart"],
-      },
-      {
-        name: "Fitness Tracker Watch",
-        price: 79.99,
-        image: "https://via.placeholder.com/200x150?text=Product+5",
-        merchants: ["Amazon", "Best Buy"],
-      },
-      {
-        name: "Wireless Bluetooth Headphones",
-        price: 59.99,
-        image: "https://via.placeholder.com/200x150?text=Product+1",
-        merchants: ["Amazon", "Best Buy", "Walmart"],
-      },
-      {
-        name: "Smartphone XYZ Model",
-        price: 499.99,
-        image: "https://via.placeholder.com/200x150?text=Product+2",
-        merchants: ["Amazon", "Target"],
-      },
-      {
-        name: "4K Ultra HD Smart TV",
-        price: 349.99,
-        image: "https://via.placeholder.com/200x150?text=Product+3",
-        merchants: ["Best Buy", "Walmart"],
-      },
-      {
-        name: "Wireless Charging Pad",
-        price: 19.99,
-        image: "https://via.placeholder.com/200x150?text=Product+4",
-        merchants: ["Amazon", "Target", "Walmart"],
-      },
-      {
-        name: "Fitness Tracker Watch",
-        price: 79.99,
-        image: "https://via.placeholder.com/200x150?text=Product+5",
-        merchants: ["Amazon", "Best Buy"],
-      },
-      {
-        name: "Wireless Bluetooth Headphones",
-        price: 59.99,
-        image: "https://via.placeholder.com/200x150?text=Product+1",
-        merchants: ["Amazon", "Best Buy", "Walmart"],
-      },
-      {
-        name: "Smartphone XYZ Model",
-        price: 499.99,
-        image: "https://via.placeholder.com/200x150?text=Product+2",
-        merchants: ["Amazon", "Target"],
-      },
-      {
-        name: "4K Ultra HD Smart TV",
-        price: 349.99,
-        image: "https://via.placeholder.com/200x150?text=Product+3",
-        merchants: ["Best Buy", "Walmart"],
-      },
-      {
-        name: "Wireless Charging Pad",
-        price: 19.99,
-        image: "https://via.placeholder.com/200x150?text=Product+4",
-        merchants: ["Amazon", "Target", "Walmart"],
-      },
-      {
-        name: "Fitness Tracker Watch",
-        price: 79.99,
-        image: "https://via.placeholder.com/200x150?text=Product+5",
-        merchants: ["Amazon", "Best Buy"],
-      },
-    ];
-
-    productsGrid.innerHTML = "";
-    defaultProducts.forEach((product) => {
-      const card = createProductCard(product);
-      productsGrid.appendChild(card);
-    });
-  }
-
   // Initialize the products display
   fetchProducts();
 });
+

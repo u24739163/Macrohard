@@ -106,7 +106,6 @@ document.addEventListener("DOMContentLoaded", function () {
         type: "Register",
       };
 
-      // Simulate API call (replace with actual API call)
       const xhttp = new XMLHttpRequest();
       xhttp.open("POST", API_LINK, true);
       xhttp.setRequestHeader("Content-Type", "application/json");
