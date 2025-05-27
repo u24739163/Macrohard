@@ -1,28 +1,32 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Check admin session first
-    checkAdminSession().then(() => {
-        // Initialize the page
-        initUserManagement();
-    }).catch(error => {
-        console.error('Session check failed:', error);
-        window.location.href = '../HTML/login.html'; // Redirect to login if not authenticated
-    });
-});
+// document.addEventListener('DOMContentLoaded', function() {
+//     // Check admin session first
+//     checkAdminSession().then(() => {
+//         // Initialize the page
+//         initUserManagement();
+//     }).catch(error => {
+//         console.error('Session check failed:', error);
+//         window.location.href = '../HTML/login.html'; // Redirect to login if not authenticated
+//     });
+// });
 
-// Check if admin is logged in
-function checkAdminSession() {
-    return fetch('../API/adminAPI.php?action=check_session')
-        .then(response => response.json())
-        .then(data => {
-            if (!data.logged_in) {
-                throw new Error('Not logged in');
-            }
-            // Set admin name if available
-            if (data.name) {
-                document.getElementById('admin-name').textContent = data.name;
-            }
-        });
-}
+// // Check if admin is logged in
+// function checkAdminSession() {
+//     return fetch('../PHP/adminAPI.php?action=check_session')
+//         .then(response => response.json())
+//         .then(data => {
+//             if (!data.logged_in) {
+//                 throw new Error('Not logged in');
+//             }
+//             // Set admin name if available
+//             if (data.name) {
+//                 document.getElementById('admin-name').textContent = data.name;
+//             }
+//         });
+// }
+
+document.addEventListener('DOMContentLoaded', function() {
+        initUserManagement();
+});
 
 // Initialize user management page
 function initUserManagement() {
@@ -54,6 +58,7 @@ function initUserManagement() {
     });
 }
 
+
 // Global variables for pagination
 let currentUserPage = 1;
 let totalUserPages = 1;
@@ -64,7 +69,7 @@ function loadUsers(page, search = '') {
     currentUserPage = page;
     currentUserSearch = search;
     
-    let url = `../API/adminAPI.php?action=get_users&page=${page}`;
+    let url = `../PHP/adminAPI.php?action=get_users&page=${page}`;
     if (search) {
         url += `&search=${encodeURIComponent(search)}`;
     }
@@ -170,7 +175,7 @@ function showAddUserModal() {
 
 // Show edit user modal
 function editUser(userId) {
-    fetch(`../API/adminAPI.php?action=get_user&id=${userId}`)
+    fetch(`../PHP/adminAPI.php?action=get_user&id=${userId}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -235,7 +240,7 @@ function handleUserFormSubmit(e) {
     if (password) formData.append('password', password);
     
     // Send to server
-    fetch('../API/adminAPI.php', {
+    fetch('../PHP/adminAPI.php', {
         method: 'POST',
         body: formData
     })
@@ -265,7 +270,7 @@ function deleteUser(userId) {
     formData.append('action', 'delete_user');
     formData.append('id', userId);
     
-    fetch('../API/adminAPI.php', {
+    fetch('../PHP/adminAPI.php', {
         method: 'POST',
         body: formData
     })
