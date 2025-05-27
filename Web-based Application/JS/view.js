@@ -16,9 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  // Clear the product ID from localStorage after retrieving it
-  localStorage.removeItem("selectedProductId");
-
   // Load product data
   loadProductDetails();
 
@@ -70,8 +67,6 @@ async function loadProductDetails() {
           price: retailer.Price,
           product_url: retailer.link,
           logo_url: retailer.logo,
-          shipping_cost: null,
-          availability: "In Stock",
           retailer_id: retailer.RID,
         })),
         reviews: data.data.Reviewers
@@ -87,13 +82,18 @@ async function loadProductDetails() {
       console.log("Transformed data:", transformedData);
 
       displayProductData(transformedData);
+      
+      // Only clear the ID after successful data load
+      localStorage.removeItem("id");
     } else {
       console.error("Error loading product:", data);
       alert("Error loading product details");
+    //   window.location.href = "products.html";
     }
   } catch (error) {
     console.error("Error:", error);
     alert("Error connecting to server");
+    // window.location.href = "products.html";
   }
 }
 
@@ -134,9 +134,6 @@ function displayProductData(product) {
 
   // Update reviews
   displayReviews(product.reviews);
-
-  // Update related products
-  displayRelatedProducts(product.related_products);
 
   // Update reviews - check if reviews exist in the response
   if (product.reviews && product.reviews.length > 0) {
@@ -214,19 +211,6 @@ function createRetailerCard(priceData, isBestDeal) {
         </div>
         <div class="retailer-price">
             <span class="price">R${priceData.price.toFixed(2)}</span>
-            <span class="shipping">${
-              priceData.shipping_cost
-                ? `R${priceData.shipping_cost} Shipping`
-                : "Free Shipping"
-            }</span>
-        </div>
-        <div class="retailer-availability ${
-          priceData.availability === "In Stock" ? "in-stock" : "out-of-stock"
-        }">
-            <i class="fas fa-${
-              priceData.availability === "In Stock" ? "check" : "times"
-            }-circle"></i>
-            ${priceData.availability}
         </div>
         <div class="retailer-actions">
             <a href="${
@@ -406,42 +390,6 @@ function generateStars(rating) {
   return stars;
 }
 
-/**
- * Display related products
- */
-function displayRelatedProducts(relatedProducts) {
-  const container = document.getElementById("related-products");
-  if (!container || !relatedProducts) return;
-
-  container.innerHTML = "";
-
-  relatedProducts.forEach((product) => {
-    const card = createProductCard(product);
-    container.appendChild(card);
-  });
-}
-
-/**
- * Create product card for related products
- */
-// function createProductCard(product) {
-//     const card = document.createElement('div');
-//     card.className = 'product-card';
-    
-//     card.innerHTML = `
-//         <a href="view.php?id=${product.product_id}" class="product-link">
-//             <img src="${product.image_url || 'placeholder.jpg'}" alt="${product.name}" class="product-image">
-//             <h3 class="product-title">${product.name}</h3>
-//             <div class="product-price">R${product.min_price} - R${product.max_price}</div>
-//             <div class="product-rating">
-//                 <div class="stars">${generateStars(product.avg_rating || 0)}</div>
-//                 <span class="review-count">(${product.review_count || 0})</span>
-//             </div>
-//         </a>
-//     `;
-    
-//     return card;
-// }
 
 /**
  * Initialize tabs
@@ -602,27 +550,22 @@ function initializeReviewForm() {
   if (!reviewForm) return;
 
   // Initialize star rating interaction
-  const ratingInputs = reviewForm.querySelectorAll(
-    '.rating-input input[type="radio"]'
-  );
+  const ratingInputs = reviewForm.querySelectorAll('.rating-input input[type="radio"]');
   const ratingLabels = reviewForm.querySelectorAll(".rating-input label");
 
   ratingLabels.forEach((label, index) => {
     label.addEventListener("mouseover", () => {
       // Fill stars up to this one
       ratingLabels.forEach((l, i) => {
-        l.querySelector("i").className =
-          i <= index ? "fas fa-star" : "far fa-star";
+        l.querySelector("i").className = i <= index ? "fas fa-star" : "far fa-star";
       });
     });
 
     label.addEventListener("mouseout", () => {
       // Reset to selected rating
-      const selectedRating =
-        reviewForm.querySelector('input[name="rating"]:checked')?.value || 0;
+      const selectedRating = reviewForm.querySelector('input[name="rating"]:checked')?.value || 0;
       ratingLabels.forEach((l, i) => {
-        l.querySelector("i").className =
-          i < selectedRating ? "fas fa-star" : "far fa-star";
+        l.querySelector("i").className = i < selectedRating ? "fas fa-star" : "far fa-star";
       });
     });
   });
@@ -630,23 +573,26 @@ function initializeReviewForm() {
   reviewForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const apiKey = sessionStorage.getItem("apiKey");
+    const apiKey = localStorage.getItem("apiKey");
+    console.log("API Key present:", !!apiKey); // Log if API key exists
+
     if (!apiKey) {
       alert("Please login to submit a review");
-      window.location.href = "login.php?redirect=view.php?id=" + productId;
+      window.location.href = "login.html?redirect=view.html?id=" + productId;
       return;
     }
 
     // Get form data
-    const rating = parseFloat(
-      reviewForm.querySelector('input[name="rating"]:checked')?.value || 0
-    );
-    const comment = reviewForm
-      .querySelector('textarea[name="comment"]')
-      ?.value.trim();
-    const retailerId = parseInt(
-      reviewForm.querySelector('select[name="retailer"]')?.value || 0
-    );
+    const rating = parseFloat(reviewForm.querySelector('input[name="rating"]:checked')?.value || 0);
+    const comment = reviewForm.querySelector('textarea[name="comment"]')?.value.trim();
+    const retailerId = reviewForm.querySelector('select[name="retailer"]')?.value || null;
+
+    console.log("Form data:", {
+      rating,
+      comment,
+      retailerId,
+      productId
+    });
 
     // Validate form data
     if (!rating) {
@@ -657,10 +603,17 @@ function initializeReviewForm() {
       alert("Please enter your review");
       return;
     }
-    if (!retailerId) {
-      alert("Please select a retailer");
-      return;
-    }
+
+    const requestData = {
+      type: "AddReview",
+      apikey: apiKey,
+      Product: productId,
+      Rating: rating,
+      Comment: comment,
+      retailer: retailerId === "" ? null : retailerId
+    };
+
+    console.log("Sending request:", requestData);
 
     try {
       const response = await fetch(API_URL, {
@@ -668,36 +621,25 @@ function initializeReviewForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          type: "AddReview",
-          apikey: apiKey,
-          Product: productId,
-          Rating: rating,
-          Comment: comment,
-          retailer: retailerId,
-        }),
+        body: JSON.stringify(requestData),
       });
 
+      console.log("Response status:", response.status);
       const data = await response.json();
+      console.log("Response data:", data);
 
-      if (data.success === "success") {
-        // Show success message
+      if (data.success === "Success" || data.success === "true") {
         showNotification("Review submitted successfully!");
-
-        // Reset form
         reviewForm.reset();
-        ratingLabels.forEach(
-          (l) => (l.querySelector("i").className = "far fa-star")
-        );
-
-        // Reload product details to show new review
+        ratingLabels.forEach(l => l.querySelector("i").className = "far fa-star");
         loadProductDetails();
       } else {
-        alert("Error: " + (data.data || "Failed to submit review"));
+        console.error("Review submission failed. Response:", data);
+        alert("Error: " + (data.data || "Failed to submit review. Please try again."));
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Error connecting to server");
+      console.error("Error submitting review:", error);
+      alert("Error connecting to server. Please try again.");
     }
   });
 }

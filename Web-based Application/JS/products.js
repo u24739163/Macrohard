@@ -6,9 +6,92 @@ document.addEventListener("DOMContentLoaded", function () {
   const brandFilter = document.getElementById("brand");
   const priceFilter = document.getElementById("price");
   const sortOptions = document.querySelector(".sort-options select");
+  const searchInput = document.querySelector(".search-bar input");
+  const searchButton = document.querySelector(".search-bar button");
 
   let products = [];
   let filteredProducts = [];
+  let brands = [];
+  let categories = [];
+
+  // Function to fetch brands from API
+  function fetchBrands() {
+    const xhttp = new XMLHttpRequest();
+    xhttp.open("POST", API_LINK, true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.setRequestHeader("Accept", "application/json");
+
+    xhttp.onload = function () {
+      if (xhttp.status >= 200 && xhttp.status < 300) {
+        try {
+          const response = JSON.parse(xhttp.responseText);
+          if (response.success === "Success") {
+            brands = response.data;
+            populateBrandFilter();
+          }
+        } catch (e) {
+          console.error("Error parsing brands response:", e);
+        }
+      }
+    };
+
+    const requestData = {
+      type: "Brands",
+    };
+
+    xhttp.send(JSON.stringify(requestData));
+  }
+
+  // Function to fetch categories from API
+  function fetchCategories() {
+    const xhttp = new XMLHttpRequest();
+    xhttp.open("POST", API_LINK, true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.setRequestHeader("Accept", "application/json");
+
+    xhttp.onload = function () {
+      if (xhttp.status >= 200 && xhttp.status < 300) {
+        try {
+          const response = JSON.parse(xhttp.responseText);
+          if (response.success === "Success") {
+            // Filter out subcategories (those with ParentCategoryID)
+            categories = response.data.filter((cat) => !cat.ParentCategoryID);
+            populateCategoryFilter();
+          }
+        } catch (e) {
+          console.error("Error parsing categories response:", e);
+        }
+      }
+    };
+
+    const requestData = {
+      type: "Cat",
+    };
+
+    xhttp.send(JSON.stringify(requestData));
+  }
+
+  // Function to populate brand filter dropdown
+  function populateBrandFilter() {
+    brandFilter.innerHTML = '<option value="">All Brands</option>';
+    brands.forEach((brand) => {
+      const option = document.createElement("option");
+      option.value = brand.BrandID;
+      option.textContent = brand.Name;
+      brandFilter.appendChild(option);
+    });
+  }
+
+  // Function to populate category filter dropdown
+  function populateCategoryFilter() {
+    categoryFilter.innerHTML = '<option value="">All Categories</option>';
+    categories.forEach((category) => {
+      const option = document.createElement("option");
+      option.value = category.CategoryID;
+      option.textContent = category.Name;
+      categoryFilter.appendChild(option);
+    });
+  }
 
   // Function to create a product card element
   function createProductCard(product) {
@@ -17,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Check if product is in wishlist (you would need to implement this check)
     const isInWishlist = false; // This should be replaced with actual wishlist check
     // Generate star rating HTML
-    const rating = product.rating || 0;
+    const rating = product.Stars || 0;
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
@@ -32,27 +115,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     card.innerHTML = `
         <div class="product-image">
-          <img src="${
-            product.image || "https://via.placeholder.com/200x150?text=Product"
-          }" alt="${product.name}">
+          <img src="${product.Image.ImageURL || product.Image.Caption}" alt="${
+      product.Name
+    }">
         </div>
         <div class="product-info">
-          <div class="product-title">${product.name}</div>
-          <div class="product-price1">$${product.price.toFixed(2)}</div>
+          <div class="product-title">${product.Name}</div>
+          <div class="product-price1">$${product.Price.toFixed(2)}</div>
           <div class="product-rating">
             <div class="stars">${starsHTML}</div>
-            <div class="rating-count">(${product.reviewCount || 0})</div>
+            <div class="rating-count">(${product.NumReviews || 0})</div>
           </div>
           <div class="product-merchant">${
-            product.merchants
-              ? product.merchants.join(", ")
+            product.Retailers
+              ? product.Retailers.join(", ")
               : "Multiple merchants"
           }</div>
           <div class="product-actions">
             <a class="view-deal">View Deal</a>
             <button class="wishlist-btn ${
               isInWishlist ? "active" : ""
-            }" data-id="${product.id}">♡</button>
+            }" data-id="${product.ID}">♡</button>
           </div>
         </div>
     `;
@@ -60,25 +143,25 @@ document.addEventListener("DOMContentLoaded", function () {
     // Add click event for view deal button
     card.querySelector(".view-deal").addEventListener("click", function (e) {
       e.preventDefault();
-      viewProductDetails(product.id);
+      viewProductDetails(product.ID);
     });
 
     // Add click event for wishlist button
     card.querySelector(".wishlist-btn").addEventListener("click", function (e) {
       e.stopPropagation();
-      toggleWishlist(product.id, this);
+      toggleWishlist(product.ID, this);
     });
 
     // Make the entire card clickable (optional)
     card.addEventListener("click", function () {
-      viewProductDetails(product.id);
+      viewProductDetails(product.ID);
     });
 
     return card;
   }
 
   // Function to fetch products from API
-  function fetchProducts() {
+  function fetchProducts(searchTerm = "") {
     const loadingDiv = document.createElement("div");
     loadingDiv.id = "loading-screen";
     loadingDiv.innerHTML = '<div class="loader">Loading products...</div>';
@@ -96,8 +179,8 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
           const response = JSON.parse(xhttp.responseText);
 
-          if (response.status === "success") {
-            products = response.data.products || [];
+          if (response.success === "Success") {
+            products = response.data.Products || [];
             filteredProducts = [...products];
             renderProducts();
             updateResultsCount();
@@ -122,9 +205,16 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const requestData = {
-      action: "get_products",
-
+      type: "GetProducts",
+      Category: categoryFilter.value || undefined,
+      Brands: brandFilter.value || undefined,
+      Search: searchTerm || undefined,
     };
+
+    // Remove undefined properties
+    Object.keys(requestData).forEach(
+      (key) => requestData[key] === undefined && delete requestData[key]
+    );
 
     xhttp.send(JSON.stringify(requestData));
   }
@@ -185,18 +275,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     filteredProducts = products.filter((product) => {
       // Category filter
-      if (category && product.category !== category) return false;
+      if (category && product.CategoryID !== category) return false;
 
       // Brand filter
-      if (brand && product.brand !== brand) return false;
+      if (brand && product.BrandID !== brand) return false;
 
       // Price filter
       if (price) {
         const [min, max] = price.split("-").map(Number);
         if (price.endsWith("+")) {
-          if (product.price < min) return false;
+          if (product.Price < min) return false;
         } else {
-          if (product.price < min || product.price > max) return false;
+          if (product.Price < min || product.Price > max) return false;
         }
       }
 
@@ -215,17 +305,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     switch (sortOption) {
       case "Price: Low to High":
-        filteredProducts.sort((a, b) => a.price - b.price);
+        filteredProducts.sort((a, b) => a.Price - b.Price);
         break;
       case "Price: High to Low":
-        filteredProducts.sort((a, b) => b.price - a.price);
+        filteredProducts.sort((a, b) => b.Price - a.Price);
         break;
       case "Customer Ratings":
-        filteredProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        filteredProducts.sort((a, b) => (b.Stars || 0) - (a.Stars || 0));
         break;
       case "Newest Arrivals":
         filteredProducts.sort(
-          (a, b) => new Date(b.dateAdded) - new Date(a.dateAdded)
+          (a, b) => new Date(b.DateAdded) - new Date(a.DateAdded)
         );
         break;
       default:
@@ -252,76 +342,94 @@ document.addEventListener("DOMContentLoaded", function () {
   function showDefaultProducts() {
     const defaultProducts = [
       {
-        id: 1,
-        name: "Premium Smartphone 128GB - Black",
-        price: 599.99,
-        image: "https://via.placeholder.com/200x150?text=Smartphone",
-        merchants: ["Amazon", "Best Buy", "Walmart"],
-        category: "electronics",
-        brand: "apple",
-        rating: 4.5,
-        reviewCount: 128,
-        dateAdded: "2023-01-15",
+        ID: 1,
+        Name: "Premium Smartphone 128GB - Black",
+        Price: 599.99,
+        Image: {
+          ImageURL: "https://via.placeholder.com/200x150?text=Smartphone",
+          Caption: "Smartphone",
+        },
+        Retailers: ["Amazon", "Best Buy", "Walmart"],
+        CategoryID: "5",
+        BrandID: "1",
+        Stars: 4.5,
+        NumReviews: 128,
+        DateAdded: "2023-01-15",
       },
       {
-        id: 2,
-        name: "Wireless Noise-Cancelling Headphones",
-        price: 199.99,
-        image: "https://via.placeholder.com/200x150?text=Headphones",
-        merchants: ["Best Buy", "Target"],
-        category: "electronics",
-        brand: "sony",
-        rating: 4.2,
-        reviewCount: 50,
-        dateAdded: "2023-02-20",
+        ID: 2,
+        Name: "Wireless Noise-Cancelling Headphones",
+        Price: 199.99,
+        Image: {
+          ImageURL: "https://via.placeholder.com/200x150?text=Headphones",
+          Caption: "Headphones",
+        },
+        Retailers: ["Best Buy", "Target"],
+        CategoryID: "9",
+        BrandID: "4",
+        Stars: 4.2,
+        NumReviews: 50,
+        DateAdded: "2023-02-20",
       },
       {
-        id: 3,
-        name: "Fitness Smartwatch with Heart Rate Monitor",
-        price: 129.99,
-        image: "https://via.placeholder.com/200x150?text=Smartwatch",
-        merchants: ["Amazon", "Walmart"],
-        category: "electronics",
-        brand: "samsung",
-        rating: 4.0,
-        reviewCount: 2,
-        dateAdded: "2023-03-10",
+        ID: 3,
+        Name: "Fitness Smartwatch with Heart Rate Monitor",
+        Price: 129.99,
+        Image: {
+          ImageURL: "https://via.placeholder.com/200x150?text=Smartwatch",
+          Caption: "Smartwatch",
+        },
+        Retailers: ["Amazon", "Walmart"],
+        CategoryID: "5",
+        BrandID: "2",
+        Stars: 4.0,
+        NumReviews: 2,
+        DateAdded: "2023-03-10",
       },
       {
-        id: 4,
-        name: "10-inch Tablet 64GB - Space Gray",
-        price: 329.99,
-        image: "https://via.placeholder.com/200x150?text=Tablet",
-        merchants: ["Best Buy", "Target"],
-        category: "electronics",
-        brand: "apple",
-        rating: 4.3,
-        reviewCount: 11,
-        dateAdded: "2023-01-25",
+        ID: 4,
+        Name: "10-inch Tablet 64GB - Space Gray",
+        Price: 329.99,
+        Image: {
+          ImageURL: "https://via.placeholder.com/200x150?text=Tablet",
+          Caption: "Tablet",
+        },
+        Retailers: ["Best Buy", "Target"],
+        CategoryID: "5",
+        BrandID: "1",
+        Stars: 4.3,
+        NumReviews: 11,
+        DateAdded: "2023-01-25",
       },
       {
-        id: 5,
-        name: "Portable Bluetooth Speaker - Waterproof",
-        price: 79.99,
-        image: "https://via.placeholder.com/200x150?text=Speaker",
-        merchants: ["Amazon", "Walmart"],
-        category: "electronics",
-        brand: "sony",
-        rating: 3.9,
-        reviewCount: 28,
-        dateAdded: "2023-04-05",
+        ID: 5,
+        Name: "Portable Bluetooth Speaker - Waterproof",
+        Price: 79.99,
+        Image: {
+          ImageURL: "https://via.placeholder.com/200x150?text=Speaker",
+          Caption: "Speaker",
+        },
+        Retailers: ["Amazon", "Walmart"],
+        CategoryID: "9",
+        BrandID: "4",
+        Stars: 3.9,
+        NumReviews: 28,
+        DateAdded: "2023-04-05",
       },
       {
-        id: 6,
-        name: "27-inch 4K Monitor - IPS Panel",
-        price: 349.99,
-        image: "https://via.placeholder.com/200x150?text=Monitor",
-        merchants: ["Best Buy", "Amazon"],
-        category: "electronics",
-        brand: "samsung",
-        rating: 4.1,
-        reviewCount: 43,
-        dateAdded: "2023-03-15",
+        ID: 6,
+        Name: "27-inch 4K Monitor - IPS Panel",
+        Price: 349.99,
+        Image: {
+          ImageURL: "https://via.placeholder.com/200x150?text=Monitor",
+          Caption: "Monitor",
+        },
+        Retailers: ["Best Buy", "Amazon"],
+        CategoryID: "16",
+        BrandID: "2",
+        Stars: 4.1,
+        NumReviews: 43,
+        DateAdded: "2023-03-15",
       },
     ];
 
@@ -332,15 +440,35 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Event listeners for filters and sorting
-  categoryFilter.addEventListener("change", filterProducts);
-  brandFilter.addEventListener("change", filterProducts);
+  categoryFilter.addEventListener("change", function () {
+    fetchProducts();
+  });
+
+  brandFilter.addEventListener("change", function () {
+    fetchProducts();
+  });
+
   priceFilter.addEventListener("change", filterProducts);
+
   sortOptions.addEventListener("change", function () {
     sortProducts();
     renderProducts();
   });
 
-  // Initialize the products display
+  // Search functionality
+  searchButton.addEventListener("click", function () {
+    fetchProducts(searchInput.value.trim());
+  });
+
+  searchInput.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      fetchProducts(searchInput.value.trim());
+    }
+  });
+
+  // Initialize the page
+  fetchBrands();
+  fetchCategories();
   fetchProducts();
 });
 
