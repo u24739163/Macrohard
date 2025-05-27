@@ -270,13 +270,16 @@
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label for="review-title">Review Title</label>
-                                            <input type="text" id="review-title" name="title" required>
+                                            <label for="retailer">Select Retailer (Optional)</label>
+                                            <select id="retailer" name="retailer">
+                                                <option value="">General Review</option>
+                                                <!-- Retailer options will be populated dynamically -->
+                                            </select>
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label for="review-content">Your Review</label>
-                                            <textarea id="review-content" name="content" rows="4" required></textarea>
+                                            <label for="comment">Your Review</label>
+                                            <textarea id="comment" name="comment" rows="4" required></textarea>
                                         </div>
                                         
                                         <button type="submit" class="btn primary-btn">Submit Review</button>
@@ -305,10 +308,6 @@
                             </div>
                             <div class="retailer-price">
                                 <span class="price">R8,999.00</span>
-                                <span class="shipping">Free Shipping</span>
-                            </div>
-                            <div class="retailer-availability in-stock">
-                                <i class="fas fa-check-circle"></i> In Stock
                             </div>
                             <div class="retailer-actions">
                                 <a href="#" class="btn primary-btn retailer-btn">View Deal</a>
@@ -325,10 +324,6 @@
                             </div>
                             <div class="retailer-price">
                                 <span class="price">R9,499.00</span>
-                                <span class="shipping">R150.00 Shipping</span>
-                            </div>
-                            <div class="retailer-availability in-stock">
-                                <i class="fas fa-check-circle"></i> In Stock
                             </div>
                             <div class="retailer-actions">
                                 <a href="#" class="btn primary-btn retailer-btn">View Deal</a>
@@ -345,10 +340,6 @@
                             </div>
                             <div class="retailer-price">
                                 <span class="price">R10,499.00</span>
-                                <span class="shipping">Free Shipping</span>
-                            </div>
-                            <div class="retailer-availability low-stock">
-                                <i class="fas fa-exclamation-triangle"></i> Low Stock
                             </div>
                             <div class="retailer-actions">
                                 <a href="#" class="btn primary-btn retailer-btn">View Deal</a>
@@ -365,10 +356,6 @@
                             </div>
                             <div class="retailer-price">
                                 <span class="price">R9,999.00</span>
-                                <span class="shipping">R99.00 Shipping</span>
-                            </div>
-                            <div class="retailer-availability in-stock">
-                                <i class="fas fa-check-circle"></i> In Stock
                             </div>
                             <div class="retailer-actions">
                                 <a href="#" class="btn primary-btn retailer-btn">View Deal</a>
