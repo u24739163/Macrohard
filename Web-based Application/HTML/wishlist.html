@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist - PriceCompare</title>
+    <link rel="stylesheet" href="../CSS/wishlist.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="../JS/wishlist.js" defer></script>
+</head>
+<body>
+    <!-- Navbar (modified for wishlist) -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="../images/logo.png" alt="PriceCompare Logo">
+        </div>
+        
+        <button class="account-button">My Account</button>
+    </nav>
+    
+    <!-- Wishlist content -->
+    <div class="wishlist-container">
+        <div class="wishlist-header">
+            <h1>My Wishlist</h1>
+            <div class="wishlist-count">0 items</div>
+        </div>
+        
+        <!-- Login message (hidden by default) -->
+        <div id="login-message" style="display: none;">
+            <p>Please <a href="login.html">login</a> to view your wishlist.</p>
+        </div>
+        
+        <!-- Wishlist container for dynamic content -->
+        <div id="wishlist-container">
+            <div class="loading">Loading wishlist...</div>
+        </div>
+        
+        <!-- Empty wishlist state (hidden by default) -->
+        <div id="empty-wishlist" style="display: none;">
+            <h2>Your wishlist is empty</h2>
+            <p>Save items you love by clicking the heart icon on product pages</p>
+            <a href="products.html" class="shop-btn">Start Shopping</a>
+        </div>
+    </div>
+    
+    <!-- Footer (same as other pages) -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>PriceCompare helps you find the best deals across hundreds of online retailers to save you time and money.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Top Deals</a></li>
+                    <li><a href="products.html">New Products</a></li>
+                    <li><a href="products.html">Categories</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Help</h3>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2023 PriceCompare. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+
