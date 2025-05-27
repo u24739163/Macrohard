@@ -1,0 +1,178 @@
+
+-- Database: `u23554607_priceCheck`
+
+-- Table structure for table `Admin`
+CREATE TABLE `Admin` (
+  `User_ID` int(11) NOT NULL,
+  `Privileg_ID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Table structure for table `Brand`
+CREATE TABLE `Brand` (
+  `BrandID` int(11) NOT NULL,
+  `Name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Table structure for table `Category`
+CREATE TABLE `Category` (
+  `CategoryID` int(11) NOT NULL,
+  `Name` varchar(255) NOT NULL,
+  `ParentCategoryID` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Table structure for table `Image`
+CREATE TABLE `Image` (
+  `ImageID` int(11) NOT NULL,
+  `ImageURL` varchar(400) NOT NULL,
+  `Caption` varchar(255) DEFAULT NULL,
+  `ProductID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Table structure for table `Privileges`
+CREATE TABLE `Privileges` (
+  `Privilege_ID` int(11) NOT NULL,
+  `Privilege_Name` varchar(210) NOT NULL,
+  `Description` varchar(225) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Table structure for table `Product`
+CREATE TABLE `Product` (
+  `ProductID` int(11) NOT NULL,
+  `Name` varchar(255) NOT NULL,
+  `Description` text DEFAULT NULL,
+  `Specifications` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `BrandID` int(11) NOT NULL,
+  `CategoryID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Table structure for table `Retailer`
+CREATE TABLE `Retailer` (
+  `RetailerID` int(11) NOT NULL,
+  `Name` varchar(255) NOT NULL,
+  `Website` varchar(255) NOT NULL,
+  `LogoURL` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Table structure for table `Review`
+CREATE TABLE `Review` (
+  `Reveiw_ID` int(11) NOT NULL,
+  `Rating` decimal(2,1) NOT NULL DEFAULT 5.0,
+  `Retailer_ID` int(20) DEFAULT NULL,
+  `Product_ID` int(20) NOT NULL,
+  `User_ID` int(20) NOT NULL,
+  `Review_Date` date NOT NULL,
+  `Comment` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Table structure for table `Sells`
+CREATE TABLE `Sells` (
+  `Product_ID` int(11) NOT NULL,
+  `Retailer_ID` int(11) NOT NULL,
+  `Price` int(11) NOT NULL,
+  `Last_Updated` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Table structure for table `User`
+CREATE TABLE `User` (
+  `UserID` int(11) NOT NULL,
+  `FirstName` varchar(50) NOT NULL,
+  `LastName` varchar(50) NOT NULL,
+  `Email` varchar(255) NOT NULL,
+  `PasswordHash` varchar(255) NOT NULL,
+  `DateJoined` timestamp NOT NULL DEFAULT current_timestamp(),
+  `Apikey` varchar(255) NOT NULL,
+  `Type` enum('Admin','Customer') NOT NULL,
+  `Salt` varchar(64) NOT NULL,
+  `ThemeID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Table structure for table `Wishlist`
+CREATE TABLE `Wishlist` (
+  `UserID` int(11) NOT NULL,
+  `ProductID` int(11) NOT NULL,
+  `DateAdded` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Indexes for table `Admin`
+ALTER TABLE `Admin`
+  ADD PRIMARY KEY (`User_ID`),
+  ADD KEY `Priveleges` (`Privileg_ID`);
+-- Indexes for table `Brand`
+ALTER TABLE `Brand`
+  ADD PRIMARY KEY (`BrandID`);
+-- Indexes for table `Category`
+ALTER TABLE `Category`
+  ADD PRIMARY KEY (`CategoryID`),
+  ADD KEY `ParentCategoryID` (`ParentCategoryID`);
+-- Indexes for table `Image`
+ALTER TABLE `Image`
+  ADD PRIMARY KEY (`ImageID`),
+  ADD KEY `ProductID` (`ProductID`);
+-- Indexes for table `Privileges`
+ALTER TABLE `Privileges`
+  ADD PRIMARY KEY (`Privilege_ID`);
+-- Indexes for table `Product`
+ALTER TABLE `Product`
+  ADD PRIMARY KEY (`ProductID`),
+  ADD KEY `ProductBrand` (`BrandID`),
+  ADD KEY `ProductCategory` (`CategoryID`);
+-- Indexes for table `Retailer`
+ALTER TABLE `Retailer`
+  ADD PRIMARY KEY (`RetailerID`);
+-- Indexes for table `Review`
+ALTER TABLE `Review`
+  ADD PRIMARY KEY (`Reveiw_ID`),
+  ADD UNIQUE KEY `unique_UserID_product` (`User_ID`,`Product_ID`,`Retailer_ID`) USING BTREE,
+  ADD KEY `Retailer` (`Retailer_ID`),
+  ADD KEY `ProductID` (`Product_ID`),
+  ADD KEY `UserIDProductID` (`User_ID`,`Product_ID`);
+-- Indexes for table `Sells`
+ALTER TABLE `Sells`
+  ADD PRIMARY KEY (`Retailer_ID`,`Product_ID`),
+  ADD KEY `Product_ID` (`Product_ID`);
+-- Indexes for table `User`
+ALTER TABLE `User`
+  ADD PRIMARY KEY (`UserID`),
+  ADD UNIQUE KEY `Email` (`Email`),
+  ADD UNIQUE KEY `ApiKeyUniq` (`Apikey`),
+  ADD KEY `Themes` (`ThemeID`);
+-- Indexes for table `Wishlist`
+ALTER TABLE `Wishlist`
+  ADD PRIMARY KEY (`UserID`,`ProductID`),
+  ADD KEY `PID` (`ProductID`);
+-- AUTO_INCREMENT for table `Brand`
+ALTER TABLE `Brand`
+  MODIFY `BrandID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+-- AUTO_INCREMENT for table `Category`
+ALTER TABLE `Category`
+  MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+-- AUTO_INCREMENT for table `Image`
+ALTER TABLE `Image`
+  MODIFY `ImageID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+-- AUTO_INCREMENT for table `Product`
+ALTER TABLE `Product`
+  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+-- AUTO_INCREMENT for table `Retailer`
+ALTER TABLE `Retailer`
+  MODIFY `RetailerID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+-- AUTO_INCREMENT for table `Review`
+ALTER TABLE `Review`
+  MODIFY `Reveiw_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=319;
+-- AUTO_INCREMENT for table `User`
+ALTER TABLE `User`
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+-- Constraints for table `Admin`
+ALTER TABLE `Admin`
+  ADD CONSTRAINT `AdminUser` FOREIGN KEY (`User_ID`) REFERENCES `User` (`UserID`),
+  ADD CONSTRAINT `Priveleges` FOREIGN KEY (`Privileg_ID`) REFERENCES `Privileges` (`Privilege_ID`);
+-- Constraints for table `Image`
+ALTER TABLE `Image`
+  ADD CONSTRAINT `ProductImage` FOREIGN KEY (`ProductID`) REFERENCES `Product` (`ProductID`) ON DELETE CASCADE ON UPDATE CASCADE;
+-- Constraints for table `Product`
+ALTER TABLE `Product`
+  ADD CONSTRAINT `ProductBrand` FOREIGN KEY (`BrandID`) REFERENCES `Brand` (`BrandID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `ProductCategory` FOREIGN KEY (`CategoryID`) REFERENCES `Category` (`CategoryID`) ON DELETE CASCADE;
+-- Constraints for table `Review`
+ALTER TABLE `Review`
+  ADD CONSTRAINT `ProductID` FOREIGN KEY (`Product_ID`) REFERENCES `Product` (`ProductID`),
+  ADD CONSTRAINT `Retailer` FOREIGN KEY (`Retailer_ID`) REFERENCES `Retailer` (`RetailerID`);
+-- Constraints for table `Sells`
+ALTER TABLE `Sells`
+  ADD CONSTRAINT `Product_ID` FOREIGN KEY (`Product_ID`) REFERENCES `Product` (`ProductID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `Retail` FOREIGN KEY (`Retailer_ID`) REFERENCES `Retailer` (`RetailerID`) ON DELETE CASCADE;
+-- Constraints for table `User`
+ALTER TABLE `User`
+  ADD CONSTRAINT `Themes` FOREIGN KEY (`ThemeID`) REFERENCES `Themes` (`ThemeID`);
+-- Constraints for table `Wishlist`
+ALTER TABLE `Wishlist`
+  ADD CONSTRAINT `PID` FOREIGN KEY (`ProductID`) REFERENCES `Product` (`ProductID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `UserId` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
