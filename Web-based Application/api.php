@@ -185,7 +185,7 @@ Register
         
     }
 
-    function Brand($Brand){
+    function Brands($Brand){
         if(!is_numeric($Brand)){
             http_response_code(400);
             $this->response("false","Incorrect category id.");
@@ -1053,7 +1053,7 @@ if (isset($data['type']) && $data['type'] === "Register") {
 }else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Search'])){
     $api->Search($data['Search']);
 }else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Brands'])){
-    $api->Brand($data['Brand']);
+    $api->Brands($data['Brands']);
 }else if(isset($data['type']) && $data['type']==="GetProducts"){
     $api->NormalGetProducts();
 }
