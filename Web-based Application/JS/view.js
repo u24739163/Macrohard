@@ -214,11 +214,6 @@ function createRetailerCard(priceData, isBestDeal) {
         </div>
         <div class="retailer-actions">
             <button class="btn primary-btn retailer-btn view-deal-btn">View Deal</button>
-            <button class="btn-icon wishlist-retailer" data-retailer-id="${
-              priceData.retailer_id
-            }" title="Add to Wishlist">
-                <i class="far fa-heart"></i>
-            </button>
         </div>
     `;
 

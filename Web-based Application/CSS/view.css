@@ -388,20 +388,25 @@ header .container {
 }
 
 .retailer-actions {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
+    display: block;
+    margin-top: 15px;
 }
 
 .retailer-btn {
-    display: inline-block;
-    min-width: 120px;
-    text-align: center;
-    margin-right: 10px;
+    display: block;
+    min-width: auto;
+    margin-right: 0;
 }
 
 .view-deal-btn {
     flex: 1;
+}
+
+/* Full-width button style for retailer cards */
+.full-width-btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px 0;
 }
 
 .btn-icon {
