@@ -21,12 +21,12 @@ document.querySelectorAll('.logout').forEach(btn => {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = '../login.php';
+                    window.location.href = '../HTML/login.html';
                 }
             })
             .catch(error => {
                 console.error('Error during logout:', error);
-                window.location.href = '../login.php';
+                window.location.href = '../HTML/login.html';
             });
     });
 });
@@ -37,12 +37,12 @@ function checkAdminSession() {
         .then(data => {
             if (!data.logged_in || !data.is_admin) {
                 // Redirect to login with a message
-                window.location.href = '../login.php?error=admin_required';
+                window.location.href = '../HTML/login.html?error=admin_required';
             }
         })
         .catch(error => {
             console.error('Error checking session:', error);
-            window.location.href = '../login.php?error=session_error';
+            window.location.href = '../HTML/login.html?error=session_error';
         });
 }
 
@@ -80,7 +80,7 @@ document.querySelectorAll('.logout').forEach(btn => {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = '../login.php';
+                    window.location.href = '../HTML/login.html';
                 }
             })
             .catch(error => {
