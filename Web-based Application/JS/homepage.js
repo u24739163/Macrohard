@@ -1,4 +1,4 @@
-const API_LINK = "https://wheatley.cs.up.ac.za/u24739163/api.php";
+const API_LINK = "../PHP/api.php";
 document.addEventListener("DOMContentLoaded", function () {
   const productsGrid = document.querySelector(".products-grid");
 
