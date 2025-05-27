@@ -55,20 +55,7 @@ header .container {
     align-items: center;
 }
 
-/* Related Products Section */
-.related-products {
-    background-color: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-}
 
-.related-products h2 {
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 20px;
-}
 
 .products-carousel {
     display: flex;
