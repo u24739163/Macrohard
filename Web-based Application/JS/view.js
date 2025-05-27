@@ -500,7 +500,7 @@ function initializeWishlist() {
   checkWishlistStatus();
 
   wishlistBtn.addEventListener("click", async function () {
-    const apiKey = sessionStorage.getItem("apiKey");
+    const apiKey = localStorage.getItem("apiKey");
 
     if (!apiKey) {
       alert("Please login to manage your wishlist");
