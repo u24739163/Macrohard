@@ -209,6 +209,9 @@ function createRetailerCard(priceData, isBestDeal) {
     priceData.retailer_name
   }" class="retailer-logo">
         </div>
+        <div class="retailer-price">
+            <span class="price">R${priceData.price.toFixed(2)}</span>
+        </div>
         <div class="retailer-actions">
             <a href="${
               priceData.product_url
