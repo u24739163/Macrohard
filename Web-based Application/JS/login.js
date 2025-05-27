@@ -88,8 +88,13 @@ document.addEventListener("DOMContentLoaded", function () {
           try {
             if (response.success === "Success") {
               //document.getElementById("signupForm").replaceWith(message);
-              localStorage.setItem("apiKey", response.data.Apikey);
-              window.location.href = "homepage.html";
+              if (response.data.Type === "Admin") {
+                localStorage.setItem("apiKey", response.data.Apikey);
+                window.location.href = "adminDash.html";
+              } else {
+                localStorage.setItem("apiKey", response.data.Apikey);
+                window.location.href = "homepage.html";
+              }
             } else {
               showNotification("Username or password is incorrect", "error");
             }
