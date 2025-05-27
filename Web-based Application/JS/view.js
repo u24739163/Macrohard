@@ -272,38 +272,28 @@ function displaySpecifications(specifications) {
 
   specsContainer.innerHTML = "";
 
-  // Group specifications by category
-  const specGroups = {};
-
-  // Based on the Specifications field in the Product table,
-  // this might be a JSON string that needs parsing
   try {
     const specs =
       typeof specifications === "string"
         ? JSON.parse(specifications)
         : specifications;
 
-    // Create specification groups
-    Object.entries(specs).forEach(([category, items]) => {
-      const group = document.createElement("div");
-      group.className = "specs-group";
+    // Create a single specification group
+    const group = document.createElement("div");
+    group.className = "specs-group";
 
-      const title = document.createElement("h3");
-      title.textContent = category;
-      group.appendChild(title);
+    const list = document.createElement("ul");
+    list.className = "specs-list";
 
-      const list = document.createElement("ul");
-      list.className = "specs-list";
-
-      Object.entries(items).forEach(([label, value]) => {
-        const item = document.createElement("li");
-        item.innerHTML = `<span class="specs-label">${label}:</span> ${value}`;
-        list.appendChild(item);
-      });
-
-      group.appendChild(list);
-      specsContainer.appendChild(group);
+    // Iterate through each key-value pair
+    Object.entries(specs).forEach(([label, value]) => {
+      const item = document.createElement("li");
+      item.innerHTML = `<span class="specs-label">${label}:</span> ${value}`;
+      list.appendChild(item);
     });
+
+    group.appendChild(list);
+    specsContainer.appendChild(group);
   } catch (e) {
     console.error("Error parsing specifications:", e);
   }
@@ -663,7 +653,6 @@ function initializeReviewForm() {
     }
 
     try {
-      // Use localStorage for API key consistently
       const requestData = {
         type: "AddReview",
         apikey: apiKey,
@@ -812,8 +801,4 @@ function updateReviewStatisticsWithNewReview(newRating) {
   // Update stars
   updateStarRating("avg-rating-stars", newAvg);
   updateStarRating("product-stars", newAvg);
-  
-  // Update distribution bars
-  // This is more complex as we need the current distribution
-  // Just reload the whole page after a short delay instead
 }
