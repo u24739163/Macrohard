@@ -1,0 +1,9 @@
+EER Diagram:
+We made the assumption that only customers can make a wishlist therefore the wishlist is a weak entity because it depends on the UserID and without  the customer the wishlist would not exist.
+
+The assumption that reviews could be made for a product provided by a certain retailer and that review would be associated with that retailer's product since not all retailer's store/transport their stock the same and there is also the option to not associate the review with any retailer.
+
+
+
+EER_diagram(1) to EER_Diagram(Final)
+Moved the relationship (keeps_a )from User to Customer and removed is_member attribute from Customer 
