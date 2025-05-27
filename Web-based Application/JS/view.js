@@ -16,9 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  // Clear the product ID from localStorage after retrieving it
-  localStorage.removeItem("selectedProductId");
-
   // Load product data
   loadProductDetails();
 
@@ -90,10 +87,12 @@ async function loadProductDetails() {
     } else {
       console.error("Error loading product:", data);
       alert("Error loading product details");
+    //    window.location.href = "products.html";
     }
   } catch (error) {
     console.error("Error:", error);
     alert("Error connecting to server");
+    //  window.location.href = "products.html";
   }
 }
 
@@ -134,9 +133,6 @@ function displayProductData(product) {
 
   // Update reviews
   displayReviews(product.reviews);
-
-  // Update related products
-  displayRelatedProducts(product.related_products);
 
   // Update reviews - check if reviews exist in the response
   if (product.reviews && product.reviews.length > 0) {
@@ -406,42 +402,6 @@ function generateStars(rating) {
   return stars;
 }
 
-/**
- * Display related products
- */
-function displayRelatedProducts(relatedProducts) {
-  const container = document.getElementById("related-products");
-  if (!container || !relatedProducts) return;
-
-  container.innerHTML = "";
-
-  relatedProducts.forEach((product) => {
-    const card = createProductCard(product);
-    container.appendChild(card);
-  });
-}
-
-/**
- * Create product card for related products
- */
-// function createProductCard(product) {
-//     const card = document.createElement('div');
-//     card.className = 'product-card';
-    
-//     card.innerHTML = `
-//         <a href="view.php?id=${product.product_id}" class="product-link">
-//             <img src="${product.image_url || 'placeholder.jpg'}" alt="${product.name}" class="product-image">
-//             <h3 class="product-title">${product.name}</h3>
-//             <div class="product-price">R${product.min_price} - R${product.max_price}</div>
-//             <div class="product-rating">
-//                 <div class="stars">${generateStars(product.avg_rating || 0)}</div>
-//                 <span class="review-count">(${product.review_count || 0})</span>
-//             </div>
-//         </a>
-//     `;
-    
-//     return card;
-// }
 
 /**
  * Initialize tabs
