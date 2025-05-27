@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize product management
+    //init
+    checkAdminSession();
     loadProducts();
     loadBrands();
     loadCategories();

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize stockist management
+    //init
+    checkAdminSession();
     loadStockists();
     
     // Setup event listeners

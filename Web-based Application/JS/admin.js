@@ -14,18 +14,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+document.querySelectorAll('.logout').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        fetch('../API/adminAPI.php?action=logout')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '../login.php';
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+                window.location.href = '../login.php';
+            });
+    });
+});
+
 function checkAdminSession() {
     fetch('../API/adminAPI.php?action=check_session')
         .then(response => response.json())
         .then(data => {
-            if (!data.logged_in) {
-                window.location.href = '../login.php';
+            if (!data.logged_in || !data.is_admin) {
+                // Redirect to login with a message
+                window.location.href = '../login.php?error=admin_required';
             }
         })
         .catch(error => {
             console.error('Error checking session:', error);
+            window.location.href = '../login.php?error=session_error';
         });
 }
+
+
 
 function loadAdminInfo() {
     // This would normally come from session, but we'll simulate it
