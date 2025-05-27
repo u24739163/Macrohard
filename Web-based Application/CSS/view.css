@@ -611,6 +611,228 @@ header .container {
     color: #555;
 }
 
+/* Enhanced Reviews Tab Styling */
+
+/* Review Summary Section */
+.review-summary {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    margin-bottom: 40px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    border: 1px solid #eee;
+}
+
+.average-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-right: 25px;
+    border-right: 1px solid #eee;
+}
+
+.rating-number {
+    font-size: 48px;
+    font-weight: 700;
+    color: #2a52be;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.rating-stars {
+    font-size: 24px;
+    color: #ffc107;
+    margin-bottom: 10px;
+}
+
+#total-reviews {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Rating Distribution */
+.rating-distribution {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.rating-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.rating-label {
+    min-width: 60px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+.progress {
+    flex: 1;
+    height: 12px;
+    background-color: #e9ecef;
+    border-radius: 6px;
+    margin: 0 15px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #2a52be;
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.rating-percentage {
+    min-width: 40px;
+    font-size: 14px;
+    color: #666;
+    text-align: right;
+}
+
+/* Individual Reviews */
+.review-list {
+    margin-bottom: 40px;
+}
+
+.review-item {
+    background-color: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.reviewer-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.review-date {
+    color: #888;
+    font-size: 14px;
+}
+
+.review-rating {
+    color: #ffc107;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.review-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 16px;
+}
+
+.review-content {
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Review Form */
+.review-form {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    border: 1px solid #eee;
+    margin-top: 30px;
+}
+
+.review-form h3 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+}
+
+/* Enhanced Star Rating Input */
+.rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    margin-bottom: 5px;
+}
+
+.rating-input input[type="radio"] {
+    display: none;
+}
+
+.rating-input label {
+    font-size: 25px;
+    color: #ddd;
+    cursor: pointer;
+    margin: 0 2px;
+    transition: color 0.2s;
+}
+
+.rating-input label:hover,
+.rating-input label:hover ~ label,
+.rating-input input[type="radio"]:checked ~ label {
+    color: #ffc107;
+}
+
+/* Form Controls */
+.review-form select,
+.review-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    background-color: white;
+}
+
+.review-form select:focus,
+.review-form textarea:focus {
+    border-color: #2a52be;
+    outline: none;
+}
+
+.review-form textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+.review-form button[type="submit"] {
+    margin-top: 10px;
+    padding: 12px 24px;
+}
+
 /* Improved button styles */
 .primary-btn {
     background-color: #2a52be;
