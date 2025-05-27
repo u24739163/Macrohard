@@ -555,7 +555,7 @@ async function checkWishlistStatus() {
   const wishlistBtn = document.getElementById("add-to-wishlist");
   if (!wishlistBtn) return;
 
-  const apiKey = sessionStorage.getItem("apiKey");
+  const apiKey = localStorage.getItem("apiKey");
   if (!apiKey) return;
 
   try {
@@ -638,7 +638,7 @@ function initializeReviewForm() {
   reviewForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const apiKey = sessionStorage.getItem("apiKey");
+    const apiKey = loaclStorage.getItem("apiKey");
     console.log("API Key present:", !!apiKey); // Log if API key exists
 
     if (!apiKey) {
