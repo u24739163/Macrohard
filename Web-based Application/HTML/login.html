@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../CSS/login.css">
+    <script src="../JS/login.js" defer></script>
+    <title>Login - PriceCompare</title>
+</head>
+<body>
+    <!-- Left side with beautiful image -->
+    <div class="login-image">
+        <div class="image-overlay"></div>
+        <div class="image-text">
+            <h2>Find the Best Deals</h2>
+            <p>Join millions of users who save money every day by comparing prices across hundreds of retailers.</p>
+        </div>
+    </div>
+    
+    <!-- Right side with login form -->
+    <div class="login-container">
+        <div class="logo">
+            <a>CompareIt</a>
+        </div>
+        
+        <div class="login-header">
+            <h1>Welcome back</h1>
+            <p>Sign in to access your account and wishlist</p>
+        </div>
+        
+        <form class="login-form" id="login-form">
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+                <div id="emailError" class="error-message"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+                <div id="passwordError" class="error-message"></div>
+            </div>
+            
+            <button type="submit" class="login-button">Sign In</button>
+            
+            <div class="divider">or</div>
+            
+            <button type="button" class="register-button" id="register-button">Create an account</button>
+        </form>
+    </div>
+</body>
+</html>

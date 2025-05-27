@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompareIt - Product Management</title>
+    <link rel="stylesheet" href="../CSS/admin.css">
+</head>
+<body>
+    <header class="admin-header">
+        <h1>CompareIt Admin Panel</h1>
+        <nav class="admin-nav">
+            <a href="adminDash.html">Dashboard</a>
+            <a href="userManagement.html">User Management</a>
+            <a href="adminProducts.html" class="active">Product Management</a>
+            <a href="adminStockists.html">Stockist Management</a>
+            <!-- LOGIN BUTTON GO HERE -->
+        </nav>
+        <div class="admin-info">
+            <span>Welcome, <span id="admin-name">Admin</span></span>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <h2>Product Management</h2>
+        
+        <div class="management-controls">
+            <button id="add-product-btn" class="btn-primary">Add New Product</button>
+            <div class="search-box">
+                <input type="text" id="product-search" placeholder="Search products...">
+                <button id="search-product-btn" class="btn-secondary">Search</button>
+            </div>
+        </div>
+
+        <table id="products-table" class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="pagination">
+            <button id="prev-product-page" class="btn-secondary">Previous</button>
+            <span id="product-page-info">Page 1 of 1</span>
+            <button id="next-product-page" class="btn-secondary">Next</button>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="product-modal-title">Add New Product</h3>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-group">
+                    <label for="product-name">Product Name:</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-brand">Brand:</label>
+                    <select id="product-brand" required>
+                        <!-- Filled by JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-category">Category:</label>
+                    <select id="product-category" required>
+                        <!-- Filled by JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-description">Description:</label>
+                    <textarea id="product-description" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-specs">Specifications (JSON):</label>
+                    <textarea id="product-specs" rows="4" placeholder='{"key":"value",...}'></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-images">Images:</label>
+                    <input type="file" id="product-images" multiple accept="image/*">
+                </div>
+                <button type="submit" class="btn-primary">Save Product</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../JS/adminProducts.js"></script>
+</body>
+</html>
