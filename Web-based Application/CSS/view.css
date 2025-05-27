@@ -717,6 +717,21 @@ header .container {
     box-shadow: 0 4px 8px rgba(0,0,0,0.08);
 }
 
+.review-item.new-review {
+    background-color: #f0f7ff;
+    border-left: 3px solid #2a52be;
+    animation: fadeInHighlight 1s ease;
+}
+
+@keyframes fadeInHighlight {
+    from {
+        background-color: #e3efff;
+    }
+    to {
+        background-color: #f0f7ff;
+    }
+}
+
 .review-header {
     display: flex;
     justify-content: space-between;
@@ -1135,4 +1150,28 @@ footer {
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
+}
+
+/* Newly added review highlight */
+.review-item.new-review {
+    background-color: #f0f7ff;
+    border-left: 3px solid #2a52be;
+    animation: fadeInHighlight 1s ease;
+}
+
+@keyframes fadeInHighlight {
+    from {
+        background-color: #e3efff;
+    }
+    to {
+        background-color: #f0f7ff;
+    }
+}
+
+/* Empty reviews state */
+.no-reviews {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
 }
