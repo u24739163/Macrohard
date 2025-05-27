@@ -424,30 +424,24 @@ function displayRelatedProducts(relatedProducts) {
 /**
  * Create product card for related products
  */
-function createProductCard(product) {
-  const card = document.createElement("div");
-  card.className = "product-card";
-
-  card.innerHTML = `
-        <a href="view.php?id=${product.product_id}" class="product-link">
-            <img src="${product.image_url || "placeholder.jpg"}" alt="${
-    product.name
-  }" class="product-image">
-            <h3 class="product-title">${product.name}</h3>
-            <div class="product-price">R${product.min_price} - R${
-    product.max_price
-  }</div>
-            <div class="product-rating">
-                <div class="stars">${generateStars(
-                  product.avg_rating || 0
-                )}</div>
-                <span class="review-count">(${product.review_count || 0})</span>
-            </div>
-        </a>
-    `;
-
-  return card;
-}
+// function createProductCard(product) {
+//     const card = document.createElement('div');
+//     card.className = 'product-card';
+    
+//     card.innerHTML = `
+//         <a href="view.php?id=${product.product_id}" class="product-link">
+//             <img src="${product.image_url || 'placeholder.jpg'}" alt="${product.name}" class="product-image">
+//             <h3 class="product-title">${product.name}</h3>
+//             <div class="product-price">R${product.min_price} - R${product.max_price}</div>
+//             <div class="product-rating">
+//                 <div class="stars">${generateStars(product.avg_rating || 0)}</div>
+//                 <span class="review-count">(${product.review_count || 0})</span>
+//             </div>
+//         </a>
+//     `;
+    
+//     return card;
+// }
 
 /**
  * Initialize tabs
