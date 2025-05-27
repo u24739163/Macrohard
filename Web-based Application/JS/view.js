@@ -620,13 +620,14 @@ function initializeReviewForm() {
           Product: productId,
           Rating: rating,
           Comment: comment,
-          retailer: retailerId || null
+          retailer: retailerId === "" ? null : retailerId
         }),
       });
 
       const data = await response.json();
+      console.log("Review submission response:", data);
 
-      if (data.success === "Success") {
+      if (data.success === "Success" || data.success === "true") {
         // Show success message
         showNotification("Review submitted successfully!");
 
@@ -637,10 +638,11 @@ function initializeReviewForm() {
         // Reload product details to show new review
         loadProductDetails();
       } else {
+        console.error("Review submission failed:", data);
         alert("Error: " + (data.data || "Failed to submit review"));
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error submitting review:", error);
       alert("Error connecting to server");
     }
   });
