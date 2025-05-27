@@ -125,8 +125,8 @@ header .container {
 
 /* Product Details Section */
 .product-details {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Create two equal columns */
     gap: 30px;
     background-color: white;
     padding: 30px;
@@ -135,25 +135,33 @@ header .container {
     margin-bottom: 30px;
 }
 
+/* Left column for product gallery */
 .product-gallery {
-    flex: 1;
-    min-width: 300px;
+    width: 100%;
+    grid-column: 1;
 }
 
 .main-image {
-    width: 500px;
-    height: 400px;
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    max-height: 400px;
     object-fit: contain;
     border-radius: 4px;
     margin-bottom: 15px;
     background-color: #f8f9fa;
     border: 1px solid #eee;
+    display: block; /* Ensure block display */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .thumbnails {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 15px;
 }
 
 .thumbnail {
@@ -172,9 +180,14 @@ header .container {
     border-color: #2a52be;
 }
 
+/* Right column for product info and description */
 .product-info {
-    flex: 1;
-    min-width: 300px;
+    width: 100%;
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    border-top: none; /* Remove the top border since it's now side-by-side */
+    padding-top: 0;
 }
 
 .product-info h1 {
@@ -246,18 +259,11 @@ header .container {
     border-color: #dc3545;
 }
 
+/* Keep the product description within the product info column */
 .product-description {
-    margin-top: 30px;
-}
-
-.product-description h3 {
-    margin-bottom: 10px;
-    color: #333;
-}
-
-#product-description-content {
-    line-height: 1.6;
-    color: #555;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
 }
 
 /* Price Comparison Sidebar */
@@ -731,8 +737,16 @@ header .container {
 
 @media screen and (max-width: 768px) {
     .product-details {
-        flex-direction: column;
-        gap: 20px;
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+    }
+    
+    .product-gallery, .product-info {
+        grid-column: 1;
+    }
+    
+    .product-info {
+        padding-top: 20px;
+        border-top: 1px solid #f0f0f0;
     }
     
     .retailers-list {
