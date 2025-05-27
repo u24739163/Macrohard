@@ -1110,16 +1110,35 @@ footer {
 .footer-section h3 {
     margin-bottom: 15px;
     font-size: 18px;
+    padding-left: 10px;
+    position: relative;
 }
 
+/* Add a subtle accent mark before the heading */
+.footer-section h3::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 16px;
+    background-color: #557ff4;
+    border-radius: 2px;
+}
+
+/* Ensure consistent alignment for paragraph text */
 .footer-section p {
     color: #ddd;
     line-height: 1.6;
     margin-bottom: 10px;
+    padding-left: 10px;
 }
 
+/* Keep links aligned with the headings */
 .footer-section ul {
     list-style: none;
+    padding-left: 10px;
 }
 
 .footer-section ul li {
