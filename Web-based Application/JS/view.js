@@ -68,6 +68,7 @@ async function loadProductDetails() {
           product_url: retailer.link,
           logo_url: retailer.logo,
           retailer_id: retailer.RID,
+          Rating: retailer.Rating // Add rating from API response
         })),
         reviews: data.data.Reviewers
           ? data.data.Reviewers.map((review) => ({
@@ -202,23 +203,31 @@ function createRetailerCard(priceData, isBestDeal) {
   const card = document.createElement("div");
   card.className = `retailer-card ${isBestDeal ? "best-deal" : ""}`;
 
+  // Generate stars HTML based on rating
+  const rating = priceData.Rating || 0; // Default to 0 if no rating
+  const starsHtml = generateRetailerStars(rating);
+
   card.innerHTML = `
         ${isBestDeal ? '<div class="best-deal-badge">Best Deal</div>' : ""}
-        <div class="retailer-header">
-            <img src="${priceData.logo_url || "placeholder-logo.png"}" alt="${
+        <div class="retailer-card-grid">
+            <div class="retailer-left-column">
+                ${rating ? `
+                <div class="retailer-rating">
+                    <div class="stars">${starsHtml}</div>
+                    <span class="rating-value">${parseFloat(rating).toFixed(1)}</span>
+                </div>` : ''}
+                <div class="retailer-logo-container">
+                    <img src="${priceData.logo_url || "placeholder-logo.png"}" alt="${
     priceData.retailer_name
   }" class="retailer-logo">
-        </div>
-        <div class="retailer-price">
-            <span class="price">R${priceData.price.toFixed(2)}</span>
-        </div>
-        <div class="retailer-actions">
-            <button class="btn primary-btn retailer-btn view-deal-btn">View Deal</button>
-            <button class="btn-icon wishlist-retailer" data-retailer-id="${
-              priceData.retailer_id
-            }" title="Add to Wishlist">
-                <i class="far fa-heart"></i>
-            </button>
+                </div>
+            </div>
+            <div class="retailer-info-container">
+                <div class="retailer-price">
+                    <span class="price">R${priceData.price.toFixed(2)}</span>
+                </div>
+                <button class="btn primary-btn view-deal-btn">View Deal</button>
+            </div>
         </div>
     `;
 
@@ -229,6 +238,29 @@ function createRetailerCard(priceData, isBestDeal) {
   });
 
   return card;
+}
+
+/**
+ * Generate star HTML for retailer ratings
+ */
+function generateRetailerStars(rating) {
+  if (!rating) return '';
+  
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating - fullStars >= 0.5;
+  let stars = '';
+  
+  for (let i = 1; i <= 5; i++) {
+    if (i <= fullStars) {
+      stars += '<i class="fas fa-star"></i>';
+    } else if (i === fullStars + 1 && hasHalfStar) {
+      stars += '<i class="fas fa-star-half-alt"></i>';
+    } else {
+      stars += '<i class="far fa-star"></i>';
+    }
+  }
+  
+  return stars;
 }
 
 /**
@@ -281,7 +313,30 @@ function displaySpecifications(specifications) {
  * Display reviews
  */
 function displayReviews(reviews) {
-  if (!reviews || reviews.length === 0) return;
+  if (!reviews || reviews.length === 0) {
+    // Handle empty reviews
+    document.getElementById("avg-rating").textContent = "0.0";
+    document.getElementById("total-reviews").textContent = "0 reviews";
+    document.getElementById("review-count").textContent = "(0 reviews)";
+    updateStarRating("avg-rating-stars", 0);
+    updateStarRating("product-stars", 0);
+    
+    // Reset distribution bars
+    for (let i = 5; i >= 1; i--) {
+      const barElement = document.querySelector(`.rating-bar:nth-child(${6-i})`);
+      if (barElement) {
+        const bar = barElement.querySelector('.progress-bar');
+        const percentText = barElement.querySelector('.rating-percentage');
+        if (bar) bar.style.width = '0%';
+        if (percentText) percentText.textContent = '0%';
+      }
+    }
+    
+    // Clear review list
+    const reviewList = document.getElementById("review-list");
+    if (reviewList) reviewList.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to review this product!</p>';
+    return;
+  }
 
   // Calculate statistics
   const totalReviews = reviews.length;
@@ -290,40 +345,43 @@ function displayReviews(reviews) {
 
   // Update statistics
   document.getElementById("avg-rating").textContent = avgRating.toFixed(1);
-  document.getElementById(
-    "total-reviews"
-  ).textContent = `${totalReviews} reviews`;
-  document.getElementById(
-    "review-count"
-  ).textContent = `(${totalReviews} reviews)`;
+  document.getElementById("total-reviews").textContent = `${totalReviews} reviews`;
+  document.getElementById("review-count").textContent = `(${totalReviews} reviews)`;
 
   // Update stars
   updateStarRating("avg-rating-stars", avgRating);
   updateStarRating("product-stars", avgRating);
 
   // Calculate distribution
-  const distribution = [0, 0, 0, 0, 0];
+  const distribution = [0, 0, 0, 0, 0]; // 1-star, 2-star, etc.
   reviews.forEach((review) => {
-    distribution[review.rating - 1]++;
+    const ratingIndex = Math.min(Math.max(Math.floor(review.rating), 1), 5) - 1;
+    distribution[ratingIndex]++;
   });
 
   // Update distribution bars
   for (let i = 5; i >= 1; i--) {
     const percentage = (distribution[i - 1] / totalReviews) * 100;
-    const bar = document.querySelector(`[data-rating="${i}"] .progress-bar`);
-    const percentText = document.querySelector(
-      `[data-rating="${i}"] .rating-percentage`
-    );
-
-    if (bar) bar.style.width = `${percentage}%`;
-    if (percentText) percentText.textContent = `${Math.round(percentage)}%`;
+    // Select the bar using nth-child since we don't have data-rating attributes
+    const barElement = document.querySelector(`.rating-bar:nth-child(${6-i})`);
+    if (barElement) {
+      const bar = barElement.querySelector('.progress-bar');
+      const percentText = barElement.querySelector('.rating-percentage');
+      if (bar) bar.style.width = `${percentage}%`;
+      if (percentText) percentText.textContent = `${Math.round(percentage)}%`;
+    }
   }
 
   // Display recent reviews
   const reviewList = document.getElementById("review-list");
   reviewList.innerHTML = "";
 
-  reviews.slice(0, 10).forEach((review) => {
+  // Sort reviews by date (newest first)
+  const sortedReviews = [...reviews].sort((a, b) => 
+    new Date(b.date_posted) - new Date(a.date_posted)
+  );
+
+  sortedReviews.forEach((review) => {
     const reviewElement = createReviewElement(review);
     reviewList.appendChild(reviewElement);
   });
@@ -553,6 +611,9 @@ function initializeReviewForm() {
   const reviewForm = document.getElementById("review-form");
   if (!reviewForm) return;
 
+  // Populate retailer dropdown
+  populateRetailerDropdown();
+
   // Initialize star rating interaction
   const ratingInputs = reviewForm.querySelectorAll('.rating-input input[type="radio"]');
   const ratingLabels = reviewForm.querySelectorAll(".rating-input label");
@@ -577,7 +638,7 @@ function initializeReviewForm() {
   reviewForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const apiKey = localStorage.getItem("apiKey");
+    const apiKey = sessionStorage.getItem("apiKey");
     console.log("API Key present:", !!apiKey); // Log if API key exists
 
     if (!apiKey) {
@@ -589,14 +650,7 @@ function initializeReviewForm() {
     // Get form data
     const rating = parseFloat(reviewForm.querySelector('input[name="rating"]:checked')?.value || 0);
     const comment = reviewForm.querySelector('textarea[name="comment"]')?.value.trim();
-    const retailerId = reviewForm.querySelector('select[name="retailer"]')?.value || null;
-
-    console.log("Form data:", {
-      rating,
-      comment,
-      retailerId,
-      productId
-    });
+    const retailerId = parseInt(reviewForm.querySelector('select[name="retailer"]')?.value || 0);
 
     // Validate form data
     if (!rating) {
@@ -608,18 +662,19 @@ function initializeReviewForm() {
       return;
     }
 
-    const requestData = {
-      type: "AddReview",
-      apikey: apiKey,
-      Product: productId,
-      Rating: rating,
-      Comment: comment,
-      retailer: retailerId === "" ? null : retailerId
-    };
-
-    console.log("Sending request:", requestData);
-
     try {
+      // Use a consistent API key source (sessionStorage)
+      const requestData = {
+        type: "AddReview",
+        apikey: apiKey,
+        Product: parseInt(productId),
+        Rating: rating,
+        Comment: comment,
+        retailer: retailerId || null
+      };
+
+      console.log("Sending review request:", requestData);
+
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
@@ -628,22 +683,118 @@ function initializeReviewForm() {
         body: JSON.stringify(requestData),
       });
 
-      console.log("Response status:", response.status);
       const data = await response.json();
-      console.log("Response data:", data);
+      console.log("Review submission response:", data);
 
-      if (data.success === "Success" || data.success === "true") {
+      if (data.success === "success") {
+        // Show success message
         showNotification("Review submitted successfully!");
+        
+        // Reset form
         reviewForm.reset();
         ratingLabels.forEach(l => l.querySelector("i").className = "far fa-star");
+        
+        // Add the new review to the displayed reviews
+        addNewReviewToDisplay(rating, comment);
+        
+        // Reload product details to get the updated reviews from server
         loadProductDetails();
       } else {
-        console.error("Review submission failed. Response:", data);
-        alert("Error: " + (data.data || "Failed to submit review. Please try again."));
+        alert("Error: " + (data.data || "Failed to submit review"));
       }
     } catch (error) {
       console.error("Error submitting review:", error);
-      alert("Error connecting to server. Please try again.");
+      alert("Error connecting to server. Please try again later.");
     }
   });
+}
+
+/**
+ * Populate the retailer dropdown in the review form
+ */
+function populateRetailerDropdown() {
+  const retailerSelect = document.querySelector('select[name="retailer"]');
+  if (!retailerSelect) return;
+  
+  // Clear existing options except the first one
+  const defaultOption = retailerSelect.querySelector('option[value=""]');
+  retailerSelect.innerHTML = '';
+  if (defaultOption) retailerSelect.appendChild(defaultOption);
+  
+  // Get retailers from the page
+  const retailerCards = document.querySelectorAll('.retailer-card');
+  retailerCards.forEach(card => {
+    const retailerName = card.querySelector('.retailer-logo')?.alt;
+    const retailerId = card.dataset.retailerId;
+    
+    if (retailerName && retailerId) {
+      const option = document.createElement('option');
+      option.value = retailerId;
+      option.textContent = retailerName;
+      retailerSelect.appendChild(option);
+    }
+  });
+}
+
+/**
+ * Temporarily add a new review to the display before reloading
+ * This gives immediate feedback to the user
+ */
+function addNewReviewToDisplay(rating, comment) {
+  const reviewList = document.getElementById("review-list");
+  if (!reviewList) return;
+  
+  // Create a temporary review object
+  const newReview = {
+    rating: rating,
+    user_name: "You", // Or get from session if available
+    date_posted: new Date().toISOString(),
+    title: "",
+    content: comment
+  };
+  
+  // Create and prepend the review element (show it at the top)
+  const reviewElement = createReviewElement(newReview);
+  reviewElement.classList.add('new-review');
+  
+  if (reviewList.firstChild) {
+    reviewList.insertBefore(reviewElement, reviewList.firstChild);
+  } else {
+    reviewList.appendChild(reviewElement);
+  }
+  
+  // Update the statistics temporarily
+  updateReviewStatisticsWithNewReview(rating);
+}
+
+/**
+ * Update review statistics when a new review is added
+ */
+function updateReviewStatisticsWithNewReview(newRating) {
+  // Get current values
+  const totalReviewsEl = document.getElementById("total-reviews");
+  const avgRatingEl = document.getElementById("avg-rating");
+  
+  if (!totalReviewsEl || !avgRatingEl) return;
+  
+  // Parse current values
+  const currentCount = parseInt(totalReviewsEl.textContent.split(' ')[0]) || 0;
+  const currentAvg = parseFloat(avgRatingEl.textContent) || 0;
+  
+  // Calculate new values
+  const newCount = currentCount + 1;
+  const newAvg = ((currentAvg * currentCount) + newRating) / newCount;
+  
+  // Update the display
+  totalReviewsEl.textContent = `${newCount} reviews`;
+  document.getElementById("review-count").textContent = `(${newCount} reviews)`;
+  avgRatingEl.textContent = newAvg.toFixed(1);
+  
+  // Update stars
+  updateStarRating("avg-rating-stars", newAvg);
+  updateStarRating("product-stars", newAvg);
+  
+  // Update distribution bars
+  // This is more complex as we need the current distribution
+  // Just reload the whole page after a short delay instead
 }

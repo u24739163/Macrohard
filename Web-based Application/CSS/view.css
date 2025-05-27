@@ -125,8 +125,8 @@ header .container {
 
 /* Product Details Section */
 .product-details {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Create two equal columns */
     gap: 30px;
     background-color: white;
     padding: 30px;
@@ -135,25 +135,33 @@ header .container {
     margin-bottom: 30px;
 }
 
+/* Left column for product gallery */
 .product-gallery {
-    flex: 1;
-    min-width: 300px;
+    width: 100%;
+    grid-column: 1;
 }
 
 .main-image {
-    width: 500px;
-    height: 400px;
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    max-height: 400px;
     object-fit: contain;
     border-radius: 4px;
     margin-bottom: 15px;
     background-color: #f8f9fa;
     border: 1px solid #eee;
+    display: block; /* Ensure block display */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .thumbnails {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 15px;
 }
 
 .thumbnail {
@@ -172,9 +180,14 @@ header .container {
     border-color: #2a52be;
 }
 
+/* Right column for product info and description */
 .product-info {
-    flex: 1;
-    min-width: 300px;
+    width: 100%;
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    border-top: none; /* Remove the top border since it's now side-by-side */
+    padding-top: 0;
 }
 
 .product-info h1 {
@@ -246,18 +259,11 @@ header .container {
     border-color: #dc3545;
 }
 
+/* Keep the product description within the product info column */
 .product-description {
-    margin-top: 30px;
-}
-
-.product-description h3 {
-    margin-bottom: 10px;
-    color: #333;
-}
-
-#product-description-content {
-    line-height: 1.6;
-    color: #555;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
 }
 
 /* Price Comparison Sidebar */
@@ -339,18 +345,35 @@ header .container {
     margin-bottom: 10px;
 }
 
-.retailer-logo {
-    width: 120px;
-    height: 40px;
-    object-fit: contain;
+.retailer-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: white;
-    padding: 5px;
-    border-radius: 4px;
+    border-radius: 6px;
+    padding: 10px;
+    height: 100%;
     border: 1px solid #eee;
 }
 
+.retailer-logo {
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    max-height: 60px;
+    object-fit: contain;
+}
+
+.retailer-info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    height: 100%;
+}
+
 .retailer-price {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .retailer-price .price {
@@ -358,7 +381,6 @@ header .container {
     font-size: 20px;
     font-weight: 700;
     color: #2a52be;
-    margin-bottom: 2px;
 }
 
 .retailer-price .shipping {
@@ -388,20 +410,41 @@ header .container {
 }
 
 .retailer-actions {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
+    display: block;
+    margin-top: 15px;
 }
 
 .retailer-btn {
-    display: inline-block;
-    min-width: 120px;
-    text-align: center;
-    margin-right: 10px;
+    display: block;
+    min-width: auto;
+    margin-right: 0;
 }
 
 .view-deal-btn {
     flex: 1;
+    background-color: #2a52be;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    width: 100%;
+}
+
+.view-deal-btn:hover {
+    background-color: #1e3d8f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Full-width button style for retailer cards */
+.full-width-btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px 0;
 }
 
 .btn-icon {
@@ -568,6 +611,243 @@ header .container {
     color: #555;
 }
 
+/* Enhanced Reviews Tab Styling */
+
+/* Review Summary Section */
+.review-summary {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    margin-bottom: 40px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    border: 1px solid #eee;
+}
+
+.average-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-right: 25px;
+    border-right: 1px solid #eee;
+}
+
+.rating-number {
+    font-size: 48px;
+    font-weight: 700;
+    color: #2a52be;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.rating-stars {
+    font-size: 24px;
+    color: #ffc107;
+    margin-bottom: 10px;
+}
+
+#total-reviews {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Rating Distribution */
+.rating-distribution {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.rating-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.rating-label {
+    min-width: 60px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+.progress {
+    flex: 1;
+    height: 12px;
+    background-color: #e9ecef;
+    border-radius: 6px;
+    margin: 0 15px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #2a52be;
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.rating-percentage {
+    min-width: 40px;
+    font-size: 14px;
+    color: #666;
+    text-align: right;
+}
+
+/* Individual Reviews */
+.review-list {
+    margin-bottom: 40px;
+}
+
+.review-item {
+    background-color: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.review-item.new-review {
+    background-color: #f0f7ff;
+    border-left: 3px solid #2a52be;
+    animation: fadeInHighlight 1s ease;
+}
+
+@keyframes fadeInHighlight {
+    from {
+        background-color: #e3efff;
+    }
+    to {
+        background-color: #f0f7ff;
+    }
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.reviewer-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.review-date {
+    color: #888;
+    font-size: 14px;
+}
+
+.review-rating {
+    color: #ffc107;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.review-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 16px;
+}
+
+.review-content {
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Review Form */
+.review-form {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    border: 1px solid #eee;
+    margin-top: 30px;
+}
+
+.review-form h3 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+}
+
+/* Enhanced Star Rating Input */
+.rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    margin-bottom: 5px;
+}
+
+.rating-input input[type="radio"] {
+    display: none;
+}
+
+.rating-input label {
+    font-size: 25px;
+    color: #ddd;
+    cursor: pointer;
+    margin: 0 2px;
+    transition: color 0.2s;
+}
+
+.rating-input label:hover,
+.rating-input label:hover ~ label,
+.rating-input input[type="radio"]:checked ~ label {
+    color: #ffc107;
+}
+
+/* Form Controls */
+.review-form select,
+.review-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    background-color: white;
+}
+
+.review-form select:focus,
+.review-form textarea:focus {
+    border-color: #2a52be;
+    outline: none;
+}
+
+.review-form textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+.review-form button[type="submit"] {
+    margin-top: 10px;
+    padding: 12px 24px;
+}
+
 /* Improved button styles */
 .primary-btn {
     background-color: #2a52be;
@@ -585,6 +865,115 @@ header .container {
     background-color: #1e3d8f;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Updated retailer card grid layout */
+.retailer-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Retailer rating styling */
+.retailer-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 0;
+}
+
+/* New retailer left column for rating and logo */
+.retailer-left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Reduced logo container size */
+.retailer-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border-radius: 6px;
+    padding: 8px;
+    height: 50px; /* Reduced height */
+    border: 1px solid #eee;
+}
+
+.retailer-rating .stars {
+    display: flex;
+    font-size: 12px;
+    color: #ffc107;
+}
+
+.retailer-rating .rating-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+}
+
+.retailer-logo {
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    max-height: 60px;
+    object-fit: contain;
+}
+
+/* Info container styling */
+.retailer-info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    height: 100%;
+}
+
+.retailer-price {
+    margin-bottom: 5px;
+}
+
+.retailer-price .price {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    color: #2a52be;
+}
+
+/* Button styling */
+.view-deal-btn {
+    background-color: #2a52be;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    width: 100%;
+}
+
+.view-deal-btn:hover {
+    background-color: #1e3d8f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Best deal styling */
+.retailer-card.best-deal .retailer-logo-container {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+}
+
+/* Remove redundant styles */
+.retailer-header,
+.retailer-actions,
+.retailer-btn,
+.full-width-btn {
+    display: none;
 }
 
 /* Responsive Design */
@@ -612,8 +1001,16 @@ header .container {
 
 @media screen and (max-width: 768px) {
     .product-details {
-        flex-direction: column;
-        gap: 20px;
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+    }
+    
+    .product-gallery, .product-info {
+        grid-column: 1;
+    }
+    
+    .product-info {
+        padding-top: 20px;
+        border-top: 1px solid #f0f0f0;
     }
     
     .retailers-list {
@@ -753,4 +1150,28 @@ footer {
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
+}
+
+/* Newly added review highlight */
+.review-item.new-review {
+    background-color: #f0f7ff;
+    border-left: 3px solid #2a52be;
+    animation: fadeInHighlight 1s ease;
+}
+
+@keyframes fadeInHighlight {
+    from {
+        background-color: #e3efff;
+    }
+    to {
+        background-color: #f0f7ff;
+    }
+}
+
+/* Empty reviews state */
+.no-reviews {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
 }
