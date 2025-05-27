@@ -1,4 +1,4 @@
-const API_LINK = "https://wheatley.cs.up.ac.za/u24739163/api.php";
+const API_LINK = "../PHP/api.php";
 document.addEventListener("DOMContentLoaded", function () {
   const productGrid = document.querySelector(".product-grid");
   const resultsCount = document.querySelector(".results-count");
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
               : "Multiple merchants"
           }</div>
           <div class="product-actions">
-            <a href="#" class="view-deal">View Deal</a>
+            <a class="view-deal">View Deal</a>
             <button class="wishlist-btn ${
               isInWishlist ? "active" : ""
             }" data-id="${product.id}">♡</button>
@@ -132,7 +132,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to view product details
   function viewProductDetails(productId) {
     // Navigate to product details page or show modal
-    window.location.href = `product-details.html?id=${productId}`;
+    localStorage.setItem("id", productId);
+    window.location.href = "view.html";
   }
 
   // Function to toggle wishlist status

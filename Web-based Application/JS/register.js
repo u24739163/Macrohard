@@ -1,4 +1,4 @@
-const API_LINK = "https://wheatley.cs.up.ac.za/u24739163/api.php";
+const API_LINK = "../PHP/api.php";
 document.addEventListener("DOMContentLoaded", function () {
   const registerForm = document.getElementById("register-form");
   const firstNameInput = document.getElementById("first-name");
