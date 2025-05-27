@@ -67,8 +67,6 @@ async function loadProductDetails() {
           price: retailer.Price,
           product_url: retailer.link,
           logo_url: retailer.logo,
-          shipping_cost: null,
-          availability: "In Stock",
           retailer_id: retailer.RID,
         })),
         reviews: data.data.Reviewers
@@ -84,15 +82,18 @@ async function loadProductDetails() {
       console.log("Transformed data:", transformedData);
 
       displayProductData(transformedData);
+      
+      // Only clear the ID after successful data load
+      localStorage.removeItem("id");
     } else {
       console.error("Error loading product:", data);
       alert("Error loading product details");
-    //    window.location.href = "products.html";
+    //   window.location.href = "products.html";
     }
   } catch (error) {
     console.error("Error:", error);
     alert("Error connecting to server");
-    //  window.location.href = "products.html";
+    // window.location.href = "products.html";
   }
 }
 
