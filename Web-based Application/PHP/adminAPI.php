@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 session_start();
 
-include 'config.php';
+include 'Config.php';
 
 $conn->set_charset('utf8');
 
