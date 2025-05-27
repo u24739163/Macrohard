@@ -500,7 +500,7 @@ function initializeWishlist() {
   checkWishlistStatus();
 
   wishlistBtn.addEventListener("click", async function () {
-    const apiKey = sessionStorage.getItem("apiKey");
+    const apiKey = localStorage.getItem("apiKey");
 
     if (!apiKey) {
       alert("Please login to manage your wishlist");
@@ -555,7 +555,7 @@ async function checkWishlistStatus() {
   const wishlistBtn = document.getElementById("add-to-wishlist");
   if (!wishlistBtn) return;
 
-  const apiKey = sessionStorage.getItem("apiKey");
+  const apiKey = localStorage.getItem("apiKey");
   if (!apiKey) return;
 
   try {
@@ -638,7 +638,7 @@ function initializeReviewForm() {
   reviewForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const apiKey = sessionStorage.getItem("apiKey");
+    const apiKey = localStorage.getItem("apiKey");
     console.log("API Key present:", !!apiKey); // Log if API key exists
 
     if (!apiKey) {
@@ -663,14 +663,14 @@ function initializeReviewForm() {
     }
 
     try {
-      // Use a consistent API key source (sessionStorage)
+      // Use localStorage for API key consistently
       const requestData = {
         type: "AddReview",
         apikey: apiKey,
         Product: parseInt(productId),
         Rating: rating,
         Comment: comment,
-        retailer: retailerId || null
+        retailer: retailerId || ""  // Use empty string instead of null for missing retailer
       };
 
       console.log("Sending review request:", requestData);
@@ -683,8 +683,27 @@ function initializeReviewForm() {
         body: JSON.stringify(requestData),
       });
 
-      const data = await response.json();
-      console.log("Review submission response:", data);
+      // Debug: Log the raw response
+      const responseText = await response.text();
+      console.log("Raw server response:", responseText);
+      
+      // Check if response is empty
+      if (!responseText.trim()) {
+        console.error("Server returned an empty response");
+        alert("Server returned an empty response. Please try again later.");
+        return;
+      }
+      
+      // Try to parse JSON safely
+      let data;
+      try {
+        data = JSON.parse(responseText);
+        console.log("Parsed response:", data);
+      } catch (parseError) {
+        console.error("Failed to parse response as JSON:", parseError);
+        alert("Server returned an invalid response format. Please check with the administrator.");
+        return;
+      }
 
       if (data.success === "success") {
         // Show success message
