@@ -185,7 +185,7 @@ Register
         
     }
 
-    function Brand($Brand){
+    function Brands($Brand){
         if(!is_numeric($Brand)){
             http_response_code(400);
             $this->response("false","Incorrect category id.");
@@ -717,7 +717,7 @@ Register
     */
     function wishlist($apikey){
         if(!$this->IsAPiValid($apikey)){
-            http_response_code(400);
+            http_response_code(409);
             $this->response("false","Nice Apikey");
             return;
         }
@@ -761,7 +761,29 @@ Register
         $stmt->execute();
         $ImageResult = $stmt->get_result(); 
         $Image= $ImageResult->fetch_assoc();
+        $stmt=$this->conn->prepare("SELECT ROUND(AVG(`Rating`), 1) AS Stars, COUNT(`Rating`) AS `Number`
+                FROM Review WHERE `Product_ID` =?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $RatingResult = $stmt->get_result(); 
+        $Rating= $RatingResult->fetch_assoc();
+        $RatingResult->free();
+        $stmt = $this->conn->prepare("SELECT `Name` FROM `Retailer` JOIN `Sells` ON `RetailerID` = `Retailer_ID` WHERE `Product_ID` = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $Retailersresult = $stmt->get_result();
+
+        $retailers = [];
+        if ($Retailersresult) {
+            while ($Retailersrow = $Retailersresult->fetch_assoc()) {
+                $retailers[] = $Retailersrow['Name'];
+            }
+        }
+        
+        $returner['Retailers']=$retailers;
         $returner['Price']=$Price['Price'];
+        $returner['Stars']=$Rating['Stars'];
+        $returner['NumReviews']=$Rating['Number'];
         $returner['Image']=$Image;
         return $returner;
     }
@@ -1031,7 +1053,7 @@ if (isset($data['type']) && $data['type'] === "Register") {
 }else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Search'])){
     $api->Search($data['Search']);
 }else if(isset($data['type']) && $data['type']==="GetProducts" && isset($data['Brands'])){
-    $api->Brand($data['Brand']);
+    $api->Brands($data['Brands']);
 }else if(isset($data['type']) && $data['type']==="GetProducts"){
     $api->NormalGetProducts();
 }
