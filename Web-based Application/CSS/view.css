@@ -638,16 +638,43 @@ header .container {
     align-items: center;
 }
 
-/* Logo container styling */
+/* Retailer rating styling */
+.retailer-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 0;
+}
+
+/* New retailer left column for rating and logo */
+.retailer-left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Reduced logo container size */
 .retailer-logo-container {
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: white;
     border-radius: 6px;
-    padding: 10px;
-    height: 100%;
+    padding: 8px;
+    height: 50px; /* Reduced height */
     border: 1px solid #eee;
+}
+
+.retailer-rating .stars {
+    display: flex;
+    font-size: 12px;
+    color: #ffc107;
+}
+
+.retailer-rating .rating-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
 }
 
 .retailer-logo {

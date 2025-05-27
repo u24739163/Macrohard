@@ -68,6 +68,7 @@ async function loadProductDetails() {
           product_url: retailer.link,
           logo_url: retailer.logo,
           retailer_id: retailer.RID,
+          Rating: retailer.Rating // Add rating from API response
         })),
         reviews: data.data.Reviewers
           ? data.data.Reviewers.map((review) => ({
@@ -202,13 +203,24 @@ function createRetailerCard(priceData, isBestDeal) {
   const card = document.createElement("div");
   card.className = `retailer-card ${isBestDeal ? "best-deal" : ""}`;
 
+  // Generate stars HTML based on rating
+  const rating = priceData.Rating || 0; // Default to 0 if no rating
+  const starsHtml = generateRetailerStars(rating);
+
   card.innerHTML = `
         ${isBestDeal ? '<div class="best-deal-badge">Best Deal</div>' : ""}
         <div class="retailer-card-grid">
-            <div class="retailer-logo-container">
-                <img src="${priceData.logo_url || "placeholder-logo.png"}" alt="${
+            <div class="retailer-left-column">
+                ${rating ? `
+                <div class="retailer-rating">
+                    <div class="stars">${starsHtml}</div>
+                    <span class="rating-value">${parseFloat(rating).toFixed(1)}</span>
+                </div>` : ''}
+                <div class="retailer-logo-container">
+                    <img src="${priceData.logo_url || "placeholder-logo.png"}" alt="${
     priceData.retailer_name
   }" class="retailer-logo">
+                </div>
             </div>
             <div class="retailer-info-container">
                 <div class="retailer-price">
@@ -226,6 +238,29 @@ function createRetailerCard(priceData, isBestDeal) {
   });
 
   return card;
+}
+
+/**
+ * Generate star HTML for retailer ratings
+ */
+function generateRetailerStars(rating) {
+  if (!rating) return '';
+  
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating - fullStars >= 0.5;
+  let stars = '';
+  
+  for (let i = 1; i <= 5; i++) {
+    if (i <= fullStars) {
+      stars += '<i class="fas fa-star"></i>';
+    } else if (i === fullStars + 1 && hasHalfStar) {
+      stars += '<i class="fas fa-star-half-alt"></i>';
+    } else {
+      stars += '<i class="far fa-star"></i>';
+    }
+  }
+  
+  return stars;
 }
 
 /**
