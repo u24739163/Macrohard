@@ -323,7 +323,7 @@ Register
     */
     function wishlist($apikey){
         if(!$this->IsAPiValid($apikey)){
-            http_response_code(401);
+            http_response_code(400);
             $this->response("false","Nice Apikey");
             return;
         }

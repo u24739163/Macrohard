@@ -6,7 +6,7 @@
 const productId = localStorage.getItem("id");
 
 // API configuration
-const API_URL = "https://wheatley.cs.up.ac.za/u24739163/api.php"; // API endpoint. Main one
+const API_URL = "../PHP/api.php"; // API endpoint. Main one
 
 // Initialize page when `DOM` loads
 document.addEventListener("DOMContentLoaded", function () {
