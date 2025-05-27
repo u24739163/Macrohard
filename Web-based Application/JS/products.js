@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Check if product is in wishlist (you would need to implement this check)
     const isInWishlist = false; // This should be replaced with actual wishlist check
     // Generate star rating HTML
-    const rating = product.rating || 0;
+    const rating = product.Stars || 0;
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
@@ -33,26 +33,26 @@ document.addEventListener("DOMContentLoaded", function () {
     card.innerHTML = `
         <div class="product-image">
           <img src="${
-            product.image || "https://via.placeholder.com/200x150?text=Product"
-          }" alt="${product.name}">
+            product.Image.ImageURL || product.Image.Caption
+          }" alt="${product.Name}">
         </div>
         <div class="product-info">
-          <div class="product-title">${product.name}</div>
-          <div class="product-price1">$${product.price.toFixed(2)}</div>
+          <div class="product-title">${product.Name}</div>
+          <div class="product-price1">$${product.Price.toFixed(2)}</div>
           <div class="product-rating">
             <div class="stars">${starsHTML}</div>
-            <div class="rating-count">(${product.reviewCount || 0})</div>
+            <div class="rating-count">(${product.NumReviews || 0})</div>
           </div>
           <div class="product-merchant">${
-            product.merchants
-              ? product.merchants.join(", ")
+            product.Retailers
+              ? product.Retailers.join(", ")
               : "Multiple merchants"
           }</div>
           <div class="product-actions">
             <a class="view-deal">View Deal</a>
             <button class="wishlist-btn ${
               isInWishlist ? "active" : ""
-            }" data-id="${product.id}">♡</button>
+            }" data-id="${product.ID}">♡</button>
           </div>
         </div>
     `;
@@ -60,18 +60,18 @@ document.addEventListener("DOMContentLoaded", function () {
     // Add click event for view deal button
     card.querySelector(".view-deal").addEventListener("click", function (e) {
       e.preventDefault();
-      viewProductDetails(product.id);
+      viewProductDetails(product.ID);
     });
 
     // Add click event for wishlist button
     card.querySelector(".wishlist-btn").addEventListener("click", function (e) {
       e.stopPropagation();
-      toggleWishlist(product.id, this);
+      toggleWishlist(product.ID, this);
     });
 
     // Make the entire card clickable (optional)
     card.addEventListener("click", function () {
-      viewProductDetails(product.id);
+      viewProductDetails(product.ID);
     });
 
     return card;
@@ -96,8 +96,8 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
           const response = JSON.parse(xhttp.responseText);
 
-          if (response.status === "success") {
-            products = response.data.products || [];
+          if (response.success === "Success") {
+            products = response.data.Products || [];
             filteredProducts = [...products];
             renderProducts();
             updateResultsCount();
@@ -122,8 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const requestData = {
-      action: "get_products",
-
+      type: "GetProducts",
     };
 
     xhttp.send(JSON.stringify(requestData));
