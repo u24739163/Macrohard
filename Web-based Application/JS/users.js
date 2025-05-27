@@ -85,13 +85,22 @@ function fetchWithAuth(url, options = {}) {
         ...options,
         headers: headers
     }).then(response => {
+        // Check for 404 first
+        if (response.status === 404) {
+            throw new Error("API endpoint not found");
+        }
+        // Then check for 401
         if (response.status === 401) {
-            // Unauthorized - redirect to login
             localStorage.removeItem("apiKey");
             window.location.href = "login.html";
-            return Promise.reject("Unauthorized");
+            throw new Error("Unauthorized");
         }
-        return response;
+        // Then verify content is JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new TypeError("Response not JSON");
+        }
+        return response.json();
     });
 }
 
